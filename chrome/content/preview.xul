@@ -3,8 +3,10 @@
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <!-- Contents go here. -->
   <hbox>
-    <label>
-    ENCRYPTED EMAIL DATA
+    <label style="font-family: monospace;">
+      <pre>
+        ENCRYPTED EMAIL DATA
+      </pre>
     </label>
   </hbox>
 </window>

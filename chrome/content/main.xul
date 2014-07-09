@@ -3,6 +3,7 @@
  <script type="application/javascript" src="chrome://transparentcrypto/content/main.js"/>
  <statusbar id="status-bar">
   <button id="transparentcrypto-button-preview" label="Preview" oncommand="transparentcrypto.preview();"/>
-  <button id="transparentcrypto-button-graph" label="Graph" oncommand="transparentcrypto.graph();"/>
+  <button id="transparentcrypto-button-graph-d3" label="Graph (D3.js)" oncommand="transparentcrypto.graph_d3();"/>
+  <button id="transparentcrypto-button-graph-sigma" label="Graph (Sigma)" oncommand="transparentcrypto.graph_sigma();"/>
  </statusbar>
 </overlay>
