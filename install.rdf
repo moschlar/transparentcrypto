@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>transparentcrypto@secuso.informatik.tu-darmstadt.de</em:id>
+    <em:name>transparentcrypto</em:name>
+    <em:version>0.1</em:version>
+    <em:creator>Moritz Schlarb</em:creator>
+
+    <em:targetApplication>
+      <Description>
+        <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
+        <em:minVersion>24.0.*</em:minVersion>
+        <em:maxVersion>24.5.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+<!-- 
+    <em:requires>
+      <Description>
+        Enigmail
+        <em:id>{847b3a00-7ab1-11d4-8f02-006008948af5}</em:id>
+        <em:minVersion>1.6</em:minVersion>
+        <em:maxVersion>1.6</em:maxVersion>
+      </Description>
+    </em:requires>
+-->
+  </Description>
+</RDF>

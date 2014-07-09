@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay id="transparentcrypto-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ <script type="application/javascript" src="chrome://transparentcrypto/content/main.js"/>
+ <statusbar id="status-bar">
+  <button id="transparentcrypto-button-preview" label="Preview" oncommand="transparentcrypto.preview();"/>
+  <button id="transparentcrypto-button-graph" label="Graph" oncommand="transparentcrypto.graph();"/>
+ </statusbar>
+</overlay>

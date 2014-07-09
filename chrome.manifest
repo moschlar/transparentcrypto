@@ -1,0 +1,4 @@
+content transparentcrypto chrome/content/
+#overlay chrome://messenger/content/messenger.xul chrome://transparentcrypto/content/test.xul
+overlay chrome://messenger/content/messenger.xul chrome://transparentcrypto/content/main.xul
+
