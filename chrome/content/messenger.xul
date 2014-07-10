@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <overlay id="transparentcrypto-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
- <script type="application/javascript" src="chrome://transparentcrypto/content/main.js"/>
+ <script type="application/x-javascript" src="chrome://transparentcrypto/content/messenger.js"/>
  <statusbar id="status-bar">
-  <button id="transparentcrypto-button-preview" label="Preview" oncommand="transparentcrypto.preview();"/>
   <!-- Buttons only show image when they have no label (chrome://global/content/xul.css, line 138) -->
   <button id="transparentcrypto-button-graph-d3" label="Graph (D3.js)" oncommand="transparentcrypto.graph_d3();" image="chrome://transparentcrypto/content/img/d3.png" />
   <button id="transparentcrypto-button-graph-sigma" label="Graph (Sigma)" oncommand="transparentcrypto.graph_sigma();" image="chrome://transparentcrypto/content/img/sigma.png"/>

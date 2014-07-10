@@ -1,4 +1,7 @@
 content transparentcrypto chrome/content/
-#overlay chrome://messenger/content/messenger.xul chrome://transparentcrypto/content/test.xul
-overlay chrome://messenger/content/messenger.xul chrome://transparentcrypto/content/main.xul
 
+#overlay chrome://messenger/content/messenger.xul chrome://transparentcrypto/content/test.xul
+overlay chrome://messenger/content/messenger.xul chrome://transparentcrypto/content/messenger.xul
+
+overlay chrome://messenger/content/messengercompose/messengercompose.xul chrome://transparentcrypto/content/messengercompose.xul
+#overlay chrome://enigmail/content/enigmailMsgComposeOverlay.xul chrome://transparentcrypto/content/messengercomposeoverlay.xul

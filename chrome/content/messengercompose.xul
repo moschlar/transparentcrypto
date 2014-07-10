@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay id="transparentcrypto-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ <script type="application/x-javascript" src="chrome://transparentcrypto/content/messengercompose.js"/>
+
+  <toolbarpalette id="MsgComposeToolbarPalette">
+    <toolbarbutton
+        id="toolbarbutton-transparentcrypto-preview"
+        label="Preview"
+        buttontype="thunderbird"
+        oncommand="transparentcrypto.preview()">
+    </toolbarbutton>
+  </toolbarpalette>
+
+  <toolbar id="composeToolbar2"
+        defaultset="button-send,separator,button-address,button-attach,spellingButton,button-enigmail-send,button-security,toolbarbutton-transparentcrypto-preview,separator,button-save,spring,throbber-box">
+  </toolbar>
+
+</overlay>
