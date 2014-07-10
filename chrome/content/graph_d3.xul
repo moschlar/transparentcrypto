@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/"?>
 <window id="transparentcrypto-window-graph" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <!-- Contents go here. -->
   <iframe id="transparentcrypto-iframe-graph" src="chrome://transparentcrypto/content/graph_d3.html" width="600" height="400"></iframe>
 </window>
