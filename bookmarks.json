@@ -1,0 +1,400 @@
+{
+ "index": 8, 
+ "dateAdded": 1405030136528710, 
+ "title": "transparentcrypto", 
+ "lastModified": 1405098086185592, 
+ "annos": [
+  {
+   "expires": 4, 
+   "flags": 0, 
+   "name": "bookmarkPropertiesDialog/folderLastUsed", 
+   "value": 1405030180116
+  }
+ ], 
+ "children": [
+  {
+   "index": 0, 
+   "dateAdded": 1405098086125180, 
+   "title": "Thunderbird HowTos - MDN", 
+   "lastModified": 1405098086125180, 
+   "uri": "http://mdn.beonex.com/en/Extensions/Thunderbird/HowTos.html", 
+   "iconuri": "http://mdn.beonex.com/favicon.ico", 
+   "guid": "FbMs467VxvT-", 
+   "type": "text/x-moz-place", 
+   "id": 2079
+  }, 
+  {
+   "index": 1, 
+   "dateAdded": 1405098086112499, 
+   "title": "Thunderbird HowTos - Mozilla | MDN", 
+   "lastModified": 1405098086112499, 
+   "uri": "https://developer.mozilla.org/en-US/Add-ons/Thunderbird/HowTos", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "vZFVfjFTvLH-", 
+   "type": "text/x-moz-place", 
+   "id": 2077
+  }, 
+  {
+   "index": 2, 
+   "dateAdded": 1405098086061246, 
+   "title": "An overview of Thunderbird components - MDN", 
+   "lastModified": 1405098086061246, 
+   "uri": "http://mdn.beonex.com/en/Extensions/Thunderbird/An_overview_of_the_Thunderbird_interface.html", 
+   "guid": "wRgffQ3FcWtE", 
+   "type": "text/x-moz-place", 
+   "id": 2073
+  }, 
+  {
+   "index": 3, 
+   "dateAdded": 1405098086079417, 
+   "title": "An overview of Thunderbird components - Mozilla | MDN", 
+   "lastModified": 1405098086079417, 
+   "uri": "https://developer.mozilla.org/en-US/Add-ons/Thunderbird/An_overview_of_the_Thunderbird_interface", 
+   "guid": "z83jEVJI41_V", 
+   "type": "text/x-moz-place", 
+   "id": 2074
+  }, 
+  {
+   "index": 4, 
+   "dateAdded": 1405098086120212, 
+   "title": "", 
+   "lastModified": 1405098086120212, 
+   "guid": "jSTUIOK0IbWM", 
+   "type": "text/x-moz-place-separator", 
+   "id": 2078
+  }, 
+  {
+   "index": 5, 
+   "dateAdded": 1405098086090329, 
+   "title": "Thunderbird extensions - Mozilla | MDN", 
+   "lastModified": 1405098086090329, 
+   "uri": "https://developer.mozilla.org/en-US/Add-ons/Thunderbird", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "o1-YE5klFsWA", 
+   "type": "text/x-moz-place", 
+   "id": 2075
+  }, 
+  {
+   "index": 6, 
+   "dateAdded": 1405092733626032, 
+   "title": "Tutorials - Mozilla | MDN", 
+   "lastModified": 1405092733626032, 
+   "uri": "https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials#create-user-interfaces", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "qk3028JdPbJC", 
+   "type": "text/x-moz-place", 
+   "id": 2050
+  }, 
+  {
+   "index": 7, 
+   "dateAdded": 1405093060820015, 
+   "title": "Setting up an extension development environment - Mozilla | MDN", 
+   "lastModified": 1405093060820015, 
+   "uri": "https://developer.mozilla.org/en-US/Add-ons/Setting_up_extension_development_environment", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "lvhoPp_Gpr0v", 
+   "type": "text/x-moz-place", 
+   "id": 2051
+  }, 
+  {
+   "index": 8, 
+   "dateAdded": 1405094288915846, 
+   "title": "Overlay extensions - Mozilla | MDN", 
+   "lastModified": 1405094288915846, 
+   "uri": "https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "DmY1f7mnI5hZ", 
+   "type": "text/x-moz-place", 
+   "id": 2072
+  }, 
+  {
+   "index": 9, 
+   "dateAdded": 1405093241357868, 
+   "title": "XUL School Tutorial - Mozilla | MDN", 
+   "lastModified": 1405093241357868, 
+   "uri": "https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions/XUL_School", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "-MGAMJCcZ74B", 
+   "type": "text/x-moz-place", 
+   "id": 2061
+  }, 
+  {
+   "index": 10, 
+   "dateAdded": 1405093469185809, 
+   "title": "XUL Tutorial - Mozilla | MDN", 
+   "lastModified": 1405093469185809, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/Tutorial", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "OshCAWCpLv0d", 
+   "type": "text/x-moz-place", 
+   "id": 2066
+  }, 
+  {
+   "index": 11, 
+   "dateAdded": 1405098086148915, 
+   "title": "Demo Addon - Mozilla | MDN", 
+   "lastModified": 1405098086148915, 
+   "uri": "https://developer.mozilla.org/en-US/Add-ons/Thunderbird/Demo_Addon", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "WYy_3eMH6JR2", 
+   "type": "text/x-moz-place", 
+   "id": 2082
+  }, 
+  {
+   "index": 12, 
+   "dateAdded": 1405093117963015, 
+   "title": "", 
+   "lastModified": 1405093117963015, 
+   "guid": "1l0-BZ4aGd7R", 
+   "type": "text/x-moz-place-separator", 
+   "id": 2055
+  }, 
+  {
+   "index": 13, 
+   "dateAdded": 1405093101259929, 
+   "title": "XUL - Mozilla | MDN", 
+   "lastModified": 1405093101259929, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "T53u2xMI-9Lm", 
+   "type": "text/x-moz-place", 
+   "id": 2052
+  }, 
+  {
+   "index": 14, 
+   "dateAdded": 1405093107918927, 
+   "title": "XUL Reference - Mozilla | MDN", 
+   "lastModified": 1405093107918927, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/XUL_Reference", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "erQkRHhXhLvk", 
+   "type": "text/x-moz-place", 
+   "id": 2053
+  }, 
+  {
+   "index": 15, 
+   "dateAdded": 1405093115510382, 
+   "title": "XUL controls - Mozilla | MDN", 
+   "lastModified": 1405093115510382, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/XUL_controls", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "Fgssal7nWJx9", 
+   "type": "text/x-moz-place", 
+   "id": 2054
+  }, 
+  {
+   "index": 16, 
+   "dateAdded": 1405093125647724, 
+   "title": "JavaScript | MDN", 
+   "lastModified": 1405093125647724, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Web/JavaScript", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "8e2u0wsB8AbW", 
+   "type": "text/x-moz-place", 
+   "id": 2057
+  }, 
+  {
+   "index": 17, 
+   "dateAdded": 1405093132152977, 
+   "title": "JavaScript reference - JavaScript | MDN", 
+   "lastModified": 1405093132152977, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "gLfD1VdyCzCB", 
+   "type": "text/x-moz-place", 
+   "id": 2058
+  }, 
+  {
+   "index": 18, 
+   "dateAdded": 1405093137663986, 
+   "title": "JavaScript Tips | MDN", 
+   "lastModified": 1405093137663986, 
+   "uri": "https://developer.mozilla.org/en-US/docs/JavaScript_Tips", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "V0edX1pU38xW", 
+   "type": "text/x-moz-place", 
+   "id": 2059
+  }, 
+  {
+   "index": 19, 
+   "dateAdded": 1405093165440367, 
+   "title": "STEEL - Mozilla | MDN", 
+   "lastModified": 1405093165440367, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Mozilla/Tech/Toolkit_API/STEEL", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "O-I7XhAyRewB", 
+   "type": "text/x-moz-place", 
+   "id": 2060
+  }, 
+  {
+   "index": 20, 
+   "dateAdded": 1405098086134185, 
+   "title": "XPCOM Interface Reference - Mozilla | MDN", 
+   "lastModified": 1405098086134185, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface", 
+   "guid": "e1uy9FG7Wlet", 
+   "type": "text/x-moz-place", 
+   "id": 2080
+  }, 
+  {
+   "index": 21, 
+   "dateAdded": 1405093120939183, 
+   "title": "", 
+   "lastModified": 1405093120939183, 
+   "guid": "dUJLy_vJgHoN", 
+   "type": "text/x-moz-place-separator", 
+   "id": 2056
+  }, 
+  {
+   "index": 22, 
+   "dateAdded": 1405030166027581, 
+   "title": "Events - Mozilla | MDN", 
+   "lastModified": 1405030180115417, 
+   "annos": [
+    {
+     "expires": 4, 
+     "flags": 0, 
+     "name": "bookmarkProperties/description", 
+     "value": "There are a lot of events that can be fired in Mail code. Some of these are standard events, such as those created by the DOM. Others are internal to Gecko or other parts of Mozilla application code. This reference will help you track those events down and learn how to use them."
+    }
+   ], 
+   "charset": "UTF-8", 
+   "uri": "https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Events", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "UGOjLpE6-G_c", 
+   "type": "text/x-moz-place", 
+   "id": 2048
+  }, 
+  {
+   "index": 23, 
+   "dateAdded": 1405092722213663, 
+   "title": "Overlay extensions - Mozilla | MDN", 
+   "lastModified": 1405092722213663, 
+   "uri": "https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "YmCuX31_Z7gN", 
+   "type": "text/x-moz-place", 
+   "id": 2049
+  }, 
+  {
+   "index": 24, 
+   "dateAdded": 1405093251681912, 
+   "title": "Working with windows in chrome code | MDN", 
+   "lastModified": 1405093255667443, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Working_with_windows_in_chrome_code", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "ciH2VBG9neNq", 
+   "type": "text/x-moz-place", 
+   "id": 2062
+  }, 
+  {
+   "index": 25, 
+   "dateAdded": 1405093261941865, 
+   "title": "Using JavaScript code modules - Mozilla | MDN", 
+   "lastModified": 1405093261941865, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Using", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "7knCATbijgVx", 
+   "type": "text/x-moz-place", 
+   "id": 2063
+  }, 
+  {
+   "index": 26, 
+   "dateAdded": 1405093357043891, 
+   "title": "Error Console | MDN", 
+   "lastModified": 1405093357043891, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Error_Console", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "eMZ8p-dvvFdk", 
+   "type": "text/x-moz-place", 
+   "id": 2065
+  }, 
+  {
+   "index": 27, 
+   "dateAdded": 1405093491296662, 
+   "title": "Custom toolbar button - Mozilla | MDN", 
+   "lastModified": 1405093491296662, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/Toolbars/Custom_toolbar_button", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "NqLzIeIb0fSE", 
+   "type": "text/x-moz-place", 
+   "id": 2067
+  }, 
+  {
+   "index": 28, 
+   "dateAdded": 1405093685657587, 
+   "title": "Using the Editor from XUL | MDN", 
+   "lastModified": 1405093685657587, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Using_the_Editor_from_XUL#nsTextEditorKeyListener", 
+   "iconuri": "https://developer.cdn.mozilla.net/media/redesign/img/favicon32.png", 
+   "guid": "wqOrav5EgAM-", 
+   "type": "text/x-moz-place", 
+   "id": 2069
+  }, 
+  {
+   "index": 29, 
+   "dateAdded": 1405093311553581, 
+   "title": "Javascript Namespace Declaration - Stack Overflow", 
+   "lastModified": 1405093311553581, 
+   "uri": "http://stackoverflow.com/questions/881515/javascript-namespace-declaration", 
+   "iconuri": "http://cdn.sstatic.net/stackoverflow/img/favicon.ico?v=038622610830", 
+   "guid": "zHMo14vAwXxv", 
+   "type": "text/x-moz-place", 
+   "id": 2064
+  }, 
+  {
+   "index": 30, 
+   "dateAdded": 1405093654126558, 
+   "title": "javascript - Thunderbird extension, load event seems to occur only once - Stack Overflow", 
+   "lastModified": 1405093654126558, 
+   "uri": "http://stackoverflow.com/questions/7414032/thunderbird-extension-load-event-seems-to-occur-only-once/7459646#7459646", 
+   "iconuri": "http://cdn.sstatic.net/stackoverflow/img/favicon.ico?v=038622610830", 
+   "guid": "1ZIcwFRWeRFq", 
+   "type": "text/x-moz-place", 
+   "id": 2068
+  }, 
+  {
+   "index": 31, 
+   "dateAdded": 1405093706310052, 
+   "title": "", 
+   "lastModified": 1405093706310052, 
+   "guid": "ffaNS-X0bIvS", 
+   "type": "text/x-moz-place-separator", 
+   "id": 2071
+  }, 
+  {
+   "index": 32, 
+   "dateAdded": 1405098086104185, 
+   "title": "nsIEditor - Mozilla | MDN", 
+   "lastModified": 1405098086104185, 
+   "uri": "https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/NsIEditor", 
+   "guid": "zGziFWkwZFGq", 
+   "type": "text/x-moz-place", 
+   "id": 2076
+  }, 
+  {
+   "index": 33, 
+   "dateAdded": 1405098086141943, 
+   "title": "comm-release comm-release/mail/base/", 
+   "lastModified": 1405098086141943, 
+   "uri": "https://mxr.mozilla.org/comm-release/source/mail/base/", 
+   "guid": "xvtn6SMSBFNT", 
+   "type": "text/x-moz-place", 
+   "id": 2081
+  }, 
+  {
+   "index": 34, 
+   "dateAdded": 1405093704076072, 
+   "title": "comm-central comm-central/mail/components/compose/content/MsgComposeCommands.js", 
+   "lastModified": 1405093704076072, 
+   "uri": "http://mxr.mozilla.org/comm-central/source/mail/components/compose/content/MsgComposeCommands.js", 
+   "iconuri": "http://mxr.mozilla.org/mxr.png", 
+   "guid": "3GSnJ9AieT9m", 
+   "type": "text/x-moz-place", 
+   "id": 2070
+  }
+ ], 
+ "guid": "hIgE74m30bYO", 
+ "type": "text/x-moz-place-container", 
+ "id": 2047
+}
