@@ -7,7 +7,7 @@
         id="toolbarbutton-transparentcrypto-preview"
         label="Preview"
         buttontype="thunderbird"
-        oncommand="transparentcrypto.preview()">
+        oncommand="transparentcrypto.showPreviewWindow()">
     </toolbarbutton>
   </toolbarpalette>
 
