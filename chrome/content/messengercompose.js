@@ -33,7 +33,12 @@ var transparentcrypto = {
 
     makePreview: function(data) {
         log('makePreview');
-        return data;
+        crypt = '';
+        while (crypt.length < data.length) {
+            crypt += Math.random().toString(36).substr(2);
+        }
+        crypt = btoa(crypt);
+        return crypt;
     },
 
     setPreviewContent: function(data) {
