@@ -1,5 +1,9 @@
 Components.utils.import("resource://transparentcrypto/util.jsm");
 
+try {
+    log(window.openpgp.config.versionstring);
+} catch (ex) { log(ex); };
+
 /* Create namespace */
 var transparentcrypto = {
 
@@ -68,16 +72,6 @@ var transparentcrypto = {
         EditAction: function() {
             log('EditAction');
             transparentcrypto.updatePreview();
-/*
-            try {
-                log(transparentcrypto.window_preview);
-                log(gMsgCompose.editor);
-                if ((typeof transparentcrypto.window_preview != 'undefined')
-                    && (transparentcrypto.window_preview)) {
-                    transparentcrypto.window_preview.document.getElementById('encrypted-data').innerHTML = gMsgCompose.editor.outputToString('text/plain', gMsgCompose.editor.eNone);
-                }
-            } catch (ex) { log(ex); };
-*/
         }
     },
 
