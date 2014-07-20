@@ -7,6 +7,8 @@ try {
 /* Create namespace */
 var transparentcrypto = {
 
+    MAX_LINE_LENGTH: 76,
+
     editor: null,
     preview_window: null,
 
@@ -26,7 +28,7 @@ var transparentcrypto = {
     },
 
     getEditorContent: function() {
-        log('getEditorContent');
+        //log('getEditorContent');
         try {
             return this.editor.outputToString('text/plain', this.editor.eNone);
         } catch (ex) {
@@ -36,25 +38,33 @@ var transparentcrypto = {
     },
 
     makePreview: function(data) {
-        log('makePreview');
-        crypt = '';
-        while (crypt.length < data.length) {
-            crypt += Math.random().toString(36).substr(2);
+        //log('makePreview');
+        cryptdata = '';
+        while (cryptdata.length < data.length) {
+            cryptdata += Math.random().toString(36).substr(2);
         }
-        crypt = btoa(crypt);
+        cryptdata = btoa(cryptdata);
+        crypt = '';
+        for (i=0; i < cryptdata.length; i += this.MAX_LINE_LENGTH) {
+            crypt += cryptdata.substr(i, this.MAX_LINE_LENGTH) + '\n';
+        }
+        crypt = '-----BEGIN PGP MESSAGE-----\n'
+            + 'Comment: This is just a nonsene preview of your mail.\n\n'
+            + crypt
+            + '\n-----END PGP MESSAGE-----';
         return crypt;
     },
 
     setPreviewContent: function(data) {
-        log('setPreviewContent');
+        //log('setPreviewContent');
         try {
-            var elem = this.preview_window.document.getElementById('encrypted-data');
+            var elem = this.preview_window.document.getElementById('email-preview');
             elem.innerHTML = data;
         } catch (ex) { log(ex); };
     },
 
     updatePreview: function() {
-        log('updatePreview');
+        //log('updatePreview');
         if (this.preview_window) {
             try {
                 var data = this.getEditorContent();
@@ -64,13 +74,13 @@ var transparentcrypto = {
         } else {
             log('No preview window')
         }
-        log(gMsgCompose.compFields.otherRandomHeaders);
+        //log(gMsgCompose.compFields.otherRandomHeaders);
    },
 
     myEditorObserver: {
         /* http://mxr.mozilla.org/comm-central/source/mozilla/editor/idl/nsIEditorObserver.idl#21 */
         EditAction: function() {
-            log('EditAction');
+            //log('EditAction');
             transparentcrypto.updatePreview();
         }
     },
