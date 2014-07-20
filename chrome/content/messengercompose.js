@@ -74,7 +74,13 @@ var transparentcrypto = {
         } else {
             log('No preview window')
         }
-        //log(gMsgCompose.compFields.otherRandomHeaders);
+        log(gMsgCompose.compFields.from);
+        log(gMsgCompose.compFields.to);
+        log(gMsgCompose.compFields.cc);
+        log(gMsgCompose.compFields.bcc);
+        log(gMsgCompose.compFields.subject);
+        log(gMsgCompose.compFields.otherRandomHeaders);
+
    },
 
     myEditorObserver: {
