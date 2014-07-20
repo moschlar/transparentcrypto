@@ -3,7 +3,6 @@
  <script type="application/x-javascript" src="chrome://transparentcrypto/content/messenger.js"/>
  <statusbar id="status-bar">
   <!-- Buttons only show image when they have no label (chrome://global/content/xul.css, line 138) -->
-  <button id="transparentcrypto-button-graph-d3" label="Graph (D3.js)" oncommand="transparentcrypto.graph_d3();" image="chrome://transparentcrypto/content/img/d3.png" />
-  <button id="transparentcrypto-button-graph-sigma" label="Graph (Sigma)" oncommand="transparentcrypto.graph_sigma();" image="chrome://transparentcrypto/content/img/sigma.png"/>
+  <button id="transparentcrypto-button-graph" label="Graph" oncommand="transparentcrypto.graph();" />
  </statusbar>
 </overlay>
