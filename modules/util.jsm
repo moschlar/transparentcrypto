@@ -7,6 +7,11 @@ Cu.import("resource://gre/modules/devtools/Console.jsm", Console);
 
 var Application = Cc["@mozilla.org/steel/application;1"].getService(Ci.steelIApplication);
 
+/*
+var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
+                                 .getService(Components.interfaces.nsIConsoleService);
+*/
+
 /**
  * Log to system console (stdout/stderr) and application console
  * @param msg
@@ -17,6 +22,7 @@ function log(msg) {
     msg = date.toISOString() + ': ' + msg;
     Console.console.log(msg);
     Application.console.log(msg);
+    //consoleService.logStringMessage(msg);
 }
 
 log('util.jsm: ' + 'loaded')

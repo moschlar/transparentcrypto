@@ -2,7 +2,7 @@ Components.utils.import("resource://transparentcrypto/util.jsm");
 
 try {
     log(window.openpgp.config.versionstring);
-} catch (ex) { log(ex); };
+} catch (ex) { Components.utils.reportError(ex); log(ex); };
 
 /* Create namespace */
 var transparentcrypto = {
@@ -22,8 +22,33 @@ var transparentcrypto = {
                 "chrome,width=400,height=300");
             return this.preview_window;
         } catch (ex) {
-            log(ex);
+            Components.utils.reportError(ex); log(ex);
             return null;
+        };
+    },
+
+    getHeaders: function() {
+        //log('getHeaders');
+        /*
+        log(gMsgCompose.compFields.from);
+        log(gMsgCompose.compFields.to);
+        log(gMsgCompose.compFields.cc);
+        log(gMsgCompose.compFields.bcc);
+        log(gMsgCompose.compFields.subject);
+        log(document.getElementById("msgSubject").value);
+        log(gMsgCompose.compFields.otherRandomHeaders);
+        */
+        try {
+            return {
+                from: gMsgCompose.compFields.from,
+                to: gMsgCompose.compFields.to,
+                cc: gMsgCompose.compFields.cc,
+                bcc: gMsgCompose.compFields.bcc,
+                subject: gMsgCompose.compFields.subject || document.getElementById("msgSubject").value,
+            };
+        } catch (ex) {
+            Components.utils.reportError(ex); log(ex);
+            return {from: '', to: '', cc: '', bcc: '', subject: ''};
         };
     },
 
@@ -32,15 +57,29 @@ var transparentcrypto = {
         try {
             return this.editor.outputToString('text/plain', this.editor.eNone);
         } catch (ex) {
-            log(ex);
+            Components.utils.reportError(ex); log(ex);
             return '';
         };
     },
 
-    makePreview: function(data) {
+/*
+Return-Path: <moschlar@metalabs.de>
+Message-ID: <5389E86B.8050408@metalabs.de>
+Date: Sat, 31 May 2014 16:34:19 +0200
+From: Moritz Schlarb <moschlar@metalabs.de>
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:24.0) Gecko/20100101 Thunderbird/24.5.0
+MIME-Version: 1.0
+To: moschlar@metalabs.de, Moritz Schlarb <mail@moritz-schlarb.de>
+Subject: Test Encrypt
+X-Enigmail-Version: 1.6
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8bit
+*/
+
+    makePreview: function(headers, body) {
         //log('makePreview');
         cryptdata = '';
-        while (cryptdata.length < data.length) {
+        while (cryptdata.length < body.length) {
             cryptdata += Math.random().toString(36).substr(2);
         }
         cryptdata = btoa(cryptdata);
@@ -48,7 +87,11 @@ var transparentcrypto = {
         for (i=0; i < cryptdata.length; i += this.MAX_LINE_LENGTH) {
             crypt += cryptdata.substr(i, this.MAX_LINE_LENGTH) + '\n';
         }
-        crypt = '-----BEGIN PGP MESSAGE-----\n'
+        crypt = ''
+            + 'From: ' + headers['from'] + '\n'
+            + 'To: ' + headers['to'] + '\n'
+            + 'Subject: ' + headers['subject'] + '\n'
+            + '\n-----BEGIN PGP MESSAGE-----\n'
             + 'Comment: This is just a nonsene preview of your mail.\n\n'
             + crypt
             + '\n-----END PGP MESSAGE-----';
@@ -60,27 +103,21 @@ var transparentcrypto = {
         try {
             var elem = this.preview_window.document.getElementById('email-preview');
             elem.innerHTML = data;
-        } catch (ex) { log(ex); };
+        } catch (ex) { Components.utils.reportError(ex); log(ex); };
     },
 
     updatePreview: function() {
         //log('updatePreview');
         if (this.preview_window) {
             try {
-                var data = this.getEditorContent();
-                data = this.makePreview(data);
+                var headers = this.getHeaders();
+                var body = this.getEditorContent();
+                var data = this.makePreview(headers, body);
                 this.setPreviewContent(data);
-            } catch (ex) { log(ex); };
+            } catch (ex) { Components.utils.reportError(ex); log(ex); };
         } else {
             log('No preview window')
         }
-        log(gMsgCompose.compFields.from);
-        log(gMsgCompose.compFields.to);
-        log(gMsgCompose.compFields.cc);
-        log(gMsgCompose.compFields.bcc);
-        log(gMsgCompose.compFields.subject);
-        log(gMsgCompose.compFields.otherRandomHeaders);
-
    },
 
     myEditorObserver: {
@@ -97,10 +134,10 @@ var transparentcrypto = {
             log('NotifyComposeFieldsReady');
             try {
                 gMsgCompose.editor.addEditorObserver(transparentcrypto.myEditorObserver);
-            } catch (ex) { log(ex); };
+            } catch (ex) { Components.utils.reportError(ex); log(ex); };
             try {
                 transparentcrypto.editor = gMsgCompose.editor;
-            } catch (ex) { log(ex); };
+            } catch (ex) { Components.utils.reportError(ex); log(ex); };
         },
         NotifyComposeBodyReady: function() {},
         ComposeProcessDone: function(aResult) {},
@@ -111,14 +148,14 @@ var transparentcrypto = {
         log('composeWindowInit');
          try {
             gMsgCompose.RegisterStateListener(transparentcrypto.myStateListener);
-        } catch (ex) { log(ex); };
+        } catch (ex) { Components.utils.reportError(ex); log(ex); };
     },
 
     init: function() {
         log('init');
         try {
             window.addEventListener("compose-window-init", transparentcrypto.composeWindowInit, true);
-        } catch (ex) { log(ex); };
+        } catch (ex) { Components.utils.reportError(ex); log(ex); };
     },
 }
 
@@ -126,4 +163,4 @@ log('messengercompose.js: ' + 'loaded');
 
 try {
     transparentcrypto.init();
-} catch (ex) { log(ex); };
+} catch (ex) { Components.utils.reportError(ex); log(ex); };
