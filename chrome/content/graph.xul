@@ -15,6 +15,7 @@
 -->
 <window id="transparentcrypto-window-graph-sigma" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+ <script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
  <script type="application/x-javascript" src="chrome://transparentcrypto/content/graph.js"/>
 
   <tabbox id="myTabList" selectedIndex="0" flex="1">
