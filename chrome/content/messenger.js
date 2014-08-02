@@ -9,7 +9,7 @@ transparentcrypto.graph = function() {
 		window.open(
 			"chrome://transparentcrypto/content/graph.xul",
 			"transparentcrypto-window-graph",
-			"chrome,width=700,height=400");
+			"chrome,width=800,height=500");
     } catch (ex) { Components.utils.reportError(ex); log(ex); };
 };
 

@@ -24,6 +24,7 @@
       <tab label="D3"/>
       <tab label="Sigma"/>
       <tab label="vis.js"/>
+      <tab label="Cytoscape.js"/>
     </tabs>
     <tabpanels flex="1">
       <tabpanel>
@@ -111,6 +112,9 @@
       </tabpanel>
       <tabpanel>
         <browser id="transparentcrypto-browser-graph-vis" src="chrome://transparentcrypto/content/graph_vis.html" flex="1"></browser>
+      </tabpanel>
+      <tabpanel>
+        <browser id="transparentcrypto-browser-graph-cy" src="chrome://transparentcrypto/content/graph_cy.html" flex="1"></browser>
       </tabpanel>
     </tabpanels>
   </tabbox>
