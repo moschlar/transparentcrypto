@@ -19,7 +19,7 @@ var transparentcrypto = {
             this.preview_window = window.open(
                 "chrome://transparentcrypto/content/preview.xul",
                 "transparentcrypto-preview-window",
-                "chrome,width=400,height=300");
+                "chrome,centerscreen,resizable,width=400,height=300");
             return this.preview_window;
         } catch (ex) {
             Components.utils.reportError(ex); log(ex);
