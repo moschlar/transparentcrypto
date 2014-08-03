@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = [ "log" ];
+var EXPORTED_SYMBOLS = [ "log", "escapeHTML" ];
 
 const Cc = Components.classes, Ci = Components.interfaces, Cu = Components.utils;
 
@@ -23,6 +23,20 @@ function log(msg) {
     Console.console.log(msg);
     Application.console.log(msg);
     //consoleService.logStringMessage(msg);
+}
+
+/**
+ * Escape HTML special characters to HTML entities
+ * @param s
+ *     The string to convert
+ * @returns
+ *     The string with all HTML special characters converted to HTML entities
+ */
+function escapeHTML(s) {
+    return s.replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
 }
 
 log('util.jsm: ' + 'loaded')

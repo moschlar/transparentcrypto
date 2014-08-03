@@ -27,9 +27,11 @@
     };
 
     var options = {
+        nodes: {shape: "box"},
         hierarchicalLayout: true,
         stabilize: false,
         smoothCurves: false,
+        configurePhysics: true,
 /*        dataManipulation: true, // http://visjs.org/docs/network.html#Data_manipulation_custom
         onAdd: function(data, callback) {
           data.level = 1;
@@ -39,6 +41,15 @@
 
     try {
       var network = new vis.Network(container, data, options);
+      window.addEventListener("resize", function(target) {
+          try {
+            network.redraw();
+            network.zoomExtent(false, true);
+          } catch (ex) {log(ex);}
+        });
+    } catch (ex) {log(ex);}
+    try {
+      Components.utils.import("resource://transparentcrypto/util2.jsm");
     } catch (ex) {log(ex);}
 </script>
 

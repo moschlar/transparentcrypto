@@ -13,6 +13,40 @@ try {
 
 var keyId = "45D3DBDDFBDD8888";
 
+var keyTrustLevel = {
+	"u": 0,
+	"f": 1,
+	"m": 2,
+	"n": 3,
+	"q": 4,
+	"-": 4,
+	"e": 5,
+	"r": 6,
+	"d": 7,
+	"i": 8,
+	"o": 9,
+	get: function(x) {
+		return this[x] === undefined ? 10 : this[x];
+	}
+};
+
+var keyTrustName = {
+	"u": "The key is ultimately valid",
+	"f": "The key is fully valid",
+	"m": "The key is marginal valid",
+	"n": "The key is valid",
+	"q": "Undefined validity",
+	"-": "Unknown validity",
+	"e": "The key has expired",
+	"r": "The key has been revoked",
+	"d": "The key has been disabled",
+	"i": "The key is invalid",
+	"o": "Unknown",
+	get: function(x) {
+		return this[x] === undefined ? "Totally unknown" : this[x];
+	}
+};
+
 var data_d3 = {
 	nodes: [],
 	nodemap: {},
@@ -66,10 +100,11 @@ for (var i=0; i < keyListObj.keySortList.length; ++i) {
 		// {"userId":"Moritz Schlarb (TU Darmstadt) <moritz.schlarb@stud.tu-darmstadt.de>","keyTrust":"u","type":"uid"}
 	}
 	try {
+		var userId = EnigConvertGpgToUnicode(keyObj.userId);
 		data_d3.nodemap[keyObj.keyId] = i;
 		data_d3.nodes.push({
-			group: keyObj.keyTrust === "u" ? 1 : (keyObj.keyTrust === "f" ? 2 : (keyObj.keyTrust === "m" ? 3 : 4)),
-			name: EnigConvertGpgToUnicode(keyObj.userId),
+			group: keyTrustLevel.get(keyObj.keyTrust) + 1,
+			name: userId,
 		});
 		data_sigma.nodemap[keyObj.keyId] = true;
 		data_sigma.nodes.push({
@@ -77,13 +112,21 @@ for (var i=0; i < keyListObj.keySortList.length; ++i) {
 		});
 		data_vis.nodes.push({
 			id: keyObj.keyId,
-			level: keyObj.keyTrust === "u" ? 0 : (keyObj.keyTrust === "f" ? 1 : (keyObj.keyTrust === "m" ? 2 : 3)),
-			group: keyObj.keyTrust === "u" ? 1 : (keyObj.keyTrust === "f" ? 2 : (keyObj.keyTrust === "m" ? 3 : 4)),
-			label: EnigConvertGpgToUnicode(keyObj.userId),
+			level: keyTrustLevel.get(keyObj.keyTrust),
+			group: keyObj.keyTrust,
+			label: userId.replace(" <", "\n<"),
+			title: "<b>userId:</b> " + escapeHTML(userId) + "<br />" +
+				"<b>keyId:</b> " + keyObj.keyId + "<br />" +
+				"<b>keyTrust:</b> " + keyObj.keyTrust + " (" + keyTrustName.get(keyObj.keyTrust) + ")" + "<br />" +
+				"<b>ownerTrust:</b> " + keyObj.ownerTrust + "<br />" +
+				"<b>secretAvailable:</b> " + keyObj.secretAvailable + "<br />" +
+				"<b>created:</b> " + keyObj.created + "<br />" +
+				"<b>expiry:</b> " + keyObj.expiry + "<br />" +
+				"",
 		});
 		data_cy.nodes.push({data: {
 			id: keyObj.keyId,
-			name: EnigConvertGpgToUnicode(keyObj.userId),
+			name: userId,
 		}});
 	} catch (ex) {Components.utils.reportError(ex);log(ex);}
 }
