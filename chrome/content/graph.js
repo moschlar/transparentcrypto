@@ -11,8 +11,27 @@ try {
 	Components.utils.import("resource://enigmail/keyManagement.jsm");
 } catch (ex) {Components.utils.reportError(ex);log(ex);}
 
-var nodes = [];
-var edges = [];
+var keyId = "45D3DBDDFBDD8888";
+
+var data_d3 = {
+	nodes: [],
+	nodemap: {},
+    links: [],
+};
+var data_sigma = {
+	nodes: [],
+	nodemap: {},
+    edges: [],
+    edgemap: {}
+};
+var data_vis = {
+	nodes: [],
+    edges: [],
+};
+var data_cy = {
+	nodes: [],
+    edges: [],
+};
 
 var keyListObj = {};
 
@@ -46,13 +65,32 @@ for (var i=0; i < keyListObj.keySortList.length; ++i) {
 		log(JSON.stringify(keyObj.SubUserIds[j]));
 		// {"userId":"Moritz Schlarb (TU Darmstadt) <moritz.schlarb@stud.tu-darmstadt.de>","keyTrust":"u","type":"uid"}
 	}
-	nodes.push({
-		id: keyObj.keyId,
-		level: keyObj.keyTrust === "u" ? 0 : (keyObj.keyTrust === "f" ? 1 : (keyObj.keyTrust === "m" ? 2 : 3)),
-		group: keyObj.keyTrust === "u" ? 1 : (keyObj.keyTrust === "f" ? 2 : (keyObj.keyTrust === "m" ? 3 : 4)),
-		label: EnigConvertGpgToUnicode(keyObj.userId),
-	});
+	try {
+		data_d3.nodemap[keyObj.keyId] = i;
+		data_d3.nodes.push({
+			group: keyObj.keyTrust === "u" ? 1 : (keyObj.keyTrust === "f" ? 2 : (keyObj.keyTrust === "m" ? 3 : 4)),
+			name: EnigConvertGpgToUnicode(keyObj.userId),
+		});
+		data_sigma.nodemap[keyObj.keyId] = true;
+		data_sigma.nodes.push({
+			id: keyObj.keyId,
+		});
+		data_vis.nodes.push({
+			id: keyObj.keyId,
+			level: keyObj.keyTrust === "u" ? 0 : (keyObj.keyTrust === "f" ? 1 : (keyObj.keyTrust === "m" ? 2 : 3)),
+			group: keyObj.keyTrust === "u" ? 1 : (keyObj.keyTrust === "f" ? 2 : (keyObj.keyTrust === "m" ? 3 : 4)),
+			label: EnigConvertGpgToUnicode(keyObj.userId),
+		});
+		data_cy.nodes.push({data: {
+			id: keyObj.keyId,
+			name: EnigConvertGpgToUnicode(keyObj.userId),
+		}});
+	} catch (ex) {Components.utils.reportError(ex);log(ex);}
 }
+
+// Get index of central key
+var t = data_d3.nodemap[keyId];
+log(t);
 
 // From enigmailCommon.js
 
@@ -82,8 +120,6 @@ const keyValidityValue = {
 }
 
 // From enigmailViewKeySigDlg.xul
-
-var keyId = "45D3DBDDFBDD8888";
 
 var enigmailSvc = GetEnigmailSvc();
 if (!enigmailSvc) {
@@ -124,16 +160,58 @@ for (var i=0; i<aSigList.length; ++i) {
 			};
 			log(JSON.stringify(entry));
 			if (entry.type === "sig") {
-				edges.push({
+				var s = data_d3.nodemap[entry.keyId];
+				if (!s) {
+					log("###" + entry.keyId);
+					s = data_d3.nodes.length;
+					data_d3.nodemap[entry.keyId] = s;
+					data_d3.nodes.push({
+						group: 5,
+						name: EnigConvertGpgToUnicode(entry.userId),
+					});
+				}
+				data_d3.links.push({
+					target: t,
+					source: s,
+				});
+
+				if (!data_sigma.nodemap[entry.keyId]) {
+					log("###" + entry.keyId);
+					data_sigma.nodemap[entry.keyId] = true;
+					data_sigma.nodes.push({
+						id: entry.keyId,
+					});
+				}
+				var name = keyId + '-' + entry.keyId;
+				if (!data_sigma.edgemap[name]) {
+					log("###" + entry.keyId);
+					data_sigma.edgemap[name] = true;
+					data_sigma.edges.push({
+						id: name,
+						target: keyId,
+						source: entry.keyId,
+					});
+				}
+				data_vis.edges.push({
 					to: keyId,
 					from: entry.keyId,
 				});
+				data_cy.edges.push({data: {
+					target: keyId,
+					source: entry.keyId,
+				}});
 			}
 		} catch (ex) {Components.utils.reportError(ex);log(ex);}
 	}
 }
 
-log(JSON.stringify(nodes));
-log(JSON.stringify(edges));
+//log("graph.js: " + JSON.stringify(data_vis));
+//log("graph.js: " + JSON.stringify(data_cy));
 
-window._data = {nodes: nodes, edges: edges};
+delete data_d3.nodemap;
+window._data_d3 = data_d3;
+delete data_sigma.nodemap;
+delete data_sigma.edgemap;
+window._data_sigma = data_sigma;
+window._data_vis = data_vis;
+window._data_cy = data_cy;
