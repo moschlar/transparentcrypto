@@ -3,13 +3,16 @@ Components.utils.import("resource://transparentcrypto/util.jsm");
 /* Create namespace */
 var transparentcrypto = {};
 
-log('graph.js: ' + 'loaded')
+log('graph.js: ' + 'loaded');
 
 try {
 	Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 	Components.utils.import("resource://enigmail/commonFuncs.jsm");
 	Components.utils.import("resource://enigmail/keyManagement.jsm");
 } catch (ex) {Components.utils.reportError(ex);log(ex);}
+
+var nodes = [];
+var edges = [];
 
 var keyListObj = {};
 
@@ -43,6 +46,11 @@ for (var i=0; i < keyListObj.keySortList.length; ++i) {
 		log(JSON.stringify(keyObj.SubUserIds[j]));
 		// {"userId":"Moritz Schlarb (TU Darmstadt) <moritz.schlarb@stud.tu-darmstadt.de>","keyTrust":"u","type":"uid"}
 	}
+	nodes.push({
+		id: keyObj.keyId,
+		level: keyObj.keyTrust === "u" ? 0 : (keyObj.keyTrust === "f" ? 1 : (keyObj.keyTrust === "m" ? 2 : 3)),
+		label: EnigConvertGpgToUnicode(keyObj.userId),
+	});
 }
 
 // From enigmailCommon.js
@@ -69,7 +77,7 @@ const keyValidityValue = {
 	disabled: "d",
 	revoked: "r",
 	expired: "e",
-	notValid: "erid"
+	notValid: "erid",
 }
 
 // From enigmailViewKeySigDlg.xul
@@ -109,11 +117,20 @@ for (var i=0; i<aSigList.length; ++i) {
 				expiry: listRow[keyRowField.expiry],
 				uidId: listRow[keyRowField.uidId],
 				ownerTrust: listRow[keyRowField.ownerTrust],
-				userId: listRow[keyRowField.userId],
+				userId: EnigConvertGpgToUnicode(listRow[keyRowField.userId]),
 				sigType: listRow[keyRowField.sigType],
 				keyUseFor: listRow[keyRowField.keyUseFor],
 			};
 			log(JSON.stringify(entry));
+			if (entry.type === "sig") {
+				edges.push({
+					to: keyId,
+					from: entry.keyId,
+				});
+			}
 		} catch (ex) {Components.utils.reportError(ex);log(ex);}
 	}
 }
+
+log(JSON.stringify(nodes));
+log(JSON.stringify(edges));
