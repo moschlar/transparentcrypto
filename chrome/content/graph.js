@@ -3,8 +3,6 @@ Components.utils.import("resource://transparentcrypto/util.jsm");
 /* Create namespace */
 var transparentcrypto = {};
 
-log('graph.js: ' + 'loaded');
-
 try {
 	Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 	Components.utils.import("resource://enigmail/commonFuncs.jsm");
@@ -13,7 +11,7 @@ try {
 
 var keyId = "45D3DBDDFBDD8888";
 
-var keyTrustLevel = {
+const keyTrustLevel = {
 	"u": 0,
 	"f": 1,
 	"m": 2,
@@ -30,7 +28,7 @@ var keyTrustLevel = {
 	}
 };
 
-var keyTrustName = {
+const keyTrustName = {
 	"u": "The key is ultimately valid",
 	"f": "The key is fully valid",
 	"m": "The key is marginal valid",
@@ -258,3 +256,5 @@ delete data_sigma.edgemap;
 window._data_sigma = data_sigma;
 window._data_vis = data_vis;
 window._data_cy = data_cy;
+
+log('graph.js: ' + 'loaded');
