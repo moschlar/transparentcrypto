@@ -5,6 +5,7 @@
 
 <link href="chrome://transparentcrypto/content/lib/vis.min.css" rel="stylesheet" type="text/css" />
 <script src="chrome://transparentcrypto/content/lib/vis.min.js" charset="utf-8"></script>
+<script src="resource://transparentcrypto/util.jsm" charset="utf-8"></script>
 
 </head>
 
@@ -14,37 +15,50 @@
 
 <script type="text/javascript">
 
+    var _data = window.top._data;
+    log(_data);
+    log(JSON.stringify(_data));
+
     // DOM element where the Timeline will be attached
     var container = document.getElementById('container');
 
     var nodes = new vis.DataSet();
+    var edges = new vis.DataSet();
+/*
     nodes.add([
         {id: 0, level: 0, group: 1, label: 'Root', title: '<b>Root</b>'},
         {id: 1, level: 1, group: 2, label: 'A Child'},
         {id: 2, level: 1, group: 2, label: 'Another Child'},
         {id: 3, level: 2, group: 3, label: 'A Grandchild'},
     ]);
-    var edges = new vis.DataSet();
     edges.add([
         {from: 0, to: 1},
         {from: 0, to: 2},
         {from: 1, to: 3, label: 'so edgy', title: '<b>EDGY</b>'},
     ]);
+*/
+    nodes.add(_data.nodes);
+    edges.add(_data.edges);
+
+    log(JSON.stringify(nodes));
+    log(nodes.getIds());
 
     var data = {
       nodes: nodes,
       edges: edges,
     };
 
+    var data = _data;
+
     var options = {
         hierarchicalLayout: true,
         stabilize: false,
         smoothCurves: false,
-        dataManipulation: true, // http://visjs.org/docs/network.html#Data_manipulation_custom
+/*        dataManipulation: true, // http://visjs.org/docs/network.html#Data_manipulation_custom
         onAdd: function(data, callback) {
           data.level = 1;
           callback(data);
-        },
+        },*/
     };
 
     var network = new vis.Network(container, data, options);

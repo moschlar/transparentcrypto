@@ -49,6 +49,7 @@ for (var i=0; i < keyListObj.keySortList.length; ++i) {
 	nodes.push({
 		id: keyObj.keyId,
 		level: keyObj.keyTrust === "u" ? 0 : (keyObj.keyTrust === "f" ? 1 : (keyObj.keyTrust === "m" ? 2 : 3)),
+		group: keyObj.keyTrust === "u" ? 1 : (keyObj.keyTrust === "f" ? 2 : (keyObj.keyTrust === "m" ? 3 : 4)),
 		label: EnigConvertGpgToUnicode(keyObj.userId),
 	});
 }
@@ -134,3 +135,17 @@ for (var i=0; i<aSigList.length; ++i) {
 
 log(JSON.stringify(nodes));
 log(JSON.stringify(edges));
+
+nodes = [
+        {id: 0, level: 0, group: 1, label: 'Root', title: '<b>Root</b>'},
+        {id: 1, level: 1, group: 2, label: 'A Child'},
+        {id: 2, level: 1, group: 2, label: 'Another Child'},
+        {id: 3, level: 2, group: 3, label: 'A Grandchild'},
+    ];
+edges = [
+        {from: 0, to: 1},
+        {from: 0, to: 2},
+        {from: 1, to: 3, label: 'so edgy', title: '<b>EDGY</b>'},
+    ];
+
+window._data = {nodes: nodes, edges: edges};
