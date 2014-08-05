@@ -1,6 +1,12 @@
 Components.utils.import("resource://transparentcrypto/util.jsm");
 
 try {
+    Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+    //Components.utils.import("resource://enigmail/commonFuncs.jsm");
+    //Components.utils.import("resource://enigmail/keyManagement.jsm");
+} catch (ex) {Components.utils.reportError(ex);log(ex);}
+
+try {
     log(window.openpgp.config.versionstring);
 } catch (ex) { Components.utils.reportError(ex); log(ex); };
 
@@ -11,6 +17,8 @@ var transparentcrypto = {
 
     editor: null,
     preview_window: null,
+
+    publicKey: null,
 
     showPreviewWindow: function() {
         log('showPreviewWindow');
@@ -25,6 +33,34 @@ var transparentcrypto = {
             Components.utils.reportError(ex); log(ex);
             return null;
         };
+    },
+
+    getPublicKey: function() {
+        var uid = "0xFBDD8888";
+        try {
+            var enigmailSvc = EnigmailCommon.getService(window);
+            if (!enigmailSvc) throw("!enigmailSvc");
+
+            var exitCodeObj = {};
+            var errorMsgObj = {};
+
+            var key = enigmailSvc.extractKey(window, 0, uid, undefined, exitCodeObj, errorMsgObj);
+            if (exitCodeObj.value != 0) {
+              throw(errorMsgObj.value);
+            }
+
+            //log("key: " + key);
+
+            this.publicKey = openpgp.key.readArmored(key);
+
+            //log("publicKey: " + this.publicKey);
+
+            return this.publicKey;
+        } catch (ex) {
+            Components.utils.reportError(ex);
+            log(ex);
+            return undefined;
+        }
     },
 
     getHeaders: function() {
@@ -78,6 +114,15 @@ Content-Transfer-Encoding: 8bit
 
     makePreview: function(headers, body) {
         //log('makePreview');
+        var cipherText = '';
+        try {
+            var publicKey = this.publicKey || this.getPublicKey();
+            cipherText = openpgp.encryptMessage(publicKey.keys, body);
+
+            log('cipherText: ' + cipherText);
+        } catch (ex) {Components.utils.reportError(ex); log(ex);}
+
+        /*
         cryptdata = '';
         while (cryptdata.length < body.length) {
             cryptdata += Math.random().toString(36).substr(2);
@@ -87,14 +132,16 @@ Content-Transfer-Encoding: 8bit
         for (i=0; i < cryptdata.length; i += this.MAX_LINE_LENGTH) {
             crypt += cryptdata.substr(i, this.MAX_LINE_LENGTH) + '\n';
         }
+        */
         crypt = ''
             + 'From: ' + headers['from'] + '\n'
             + 'To: ' + headers['to'] + '\n'
-            + 'Subject: ' + headers['subject'] + '\n'
-            + '\n-----BEGIN PGP MESSAGE-----\n'
-            + 'Comment: This is just a nonsene preview of your mail.\n\n'
-            + crypt
-            + '\n-----END PGP MESSAGE-----';
+            + 'Subject: ' + headers['subject'] + '\n' + '\n'
+            //+ '\n-----BEGIN PGP MESSAGE-----\n'
+            //+ 'Comment: This is just a nonsene preview of your mail.\n\n'
+            + cipherText
+            //+ '\n-----END PGP MESSAGE-----'
+            ;
         return crypt;
     },
 
