@@ -200,6 +200,7 @@ for (var i=0; i<aSigList.length; ++i) {
 				keyUseFor: listRow[keyRowField.keyUseFor],
 			};
 			log(JSON.stringify(entry));
+			//{"type":"sig","keyValidity":"","keyId":"45D3DBDDFBDD8888","created":"1303911907","expiry":"","uidId":"","ownerTrust":"","userId":"Moritz Schlarb <moschlar@metalabs.de>","sigType":"18x"}
 			if (entry.type === "sig") {
 				var s = data_d3.nodemap[entry.keyId];
 				if (!s) {
@@ -236,6 +237,8 @@ for (var i=0; i<aSigList.length; ++i) {
 				data_vis.edges.push({
 					to: keyId,
 					from: entry.keyId,
+					//label: "",
+					title: entry.created,
 				});
 				data_cy.edges.push({data: {
 					target: keyId,

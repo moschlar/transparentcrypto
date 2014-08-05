@@ -28,10 +28,19 @@
 
     var options = {
         nodes: {shape: "box"},
+        edges: {
+          style: "arrow",
+          inheritColor: "from",
+        },
         hierarchicalLayout: true,
         stabilize: false,
         smoothCurves: false,
-        configurePhysics: true,
+        physics: {
+          hierarchicalRepulsion: {
+            nodeDistance: 300,
+          },
+        },
+        //configurePhysics: true,
 /*        dataManipulation: true, // http://visjs.org/docs/network.html#Data_manipulation_custom
         onAdd: function(data, callback) {
           data.level = 1;
