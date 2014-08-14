@@ -32,20 +32,48 @@
           style: "arrow",
           inheritColor: "from",
         },
-        hierarchicalLayout: true,
+        groups: {
+          u: {
+            color: "green",
+          },
+          f: {
+            color: "lightgreen",
+          },
+          m: {
+            color: "yellow",
+          },
+          n: {
+            color: "darkyellow",
+          },
+          q: {
+            color: "red",
+          },
+          "-": {
+            color: "red",
+          },
+          e: {
+            color: "red",
+          },
+        },
+        hierarchicalLayout: {
+          enabled: true,
+          nodeSpacing: 300,
+        },
         stabilize: false,
         smoothCurves: false,
-        physics: {
+        /*physics: {
           hierarchicalRepulsion: {
             nodeDistance: 300,
           },
-        },
+        },*/
+        navigation: true,
+        keyboard: true,
         //configurePhysics: true,
-/*        dataManipulation: true, // http://visjs.org/docs/network.html#Data_manipulation_custom
+        //dataManipulation: true, // http://visjs.org/docs/network.html#Data_manipulation_custom
         onAdd: function(data, callback) {
           data.level = 1;
           callback(data);
-        },*/
+        },
     };
 
     try {
@@ -56,9 +84,6 @@
             network.zoomExtent(false, true);
           } catch (ex) {log(ex);}
         });
-    } catch (ex) {log(ex);}
-    try {
-      Components.utils.import("resource://transparentcrypto/util2.jsm");
     } catch (ex) {log(ex);}
 </script>
 
