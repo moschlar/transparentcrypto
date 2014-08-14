@@ -18,11 +18,10 @@
  <script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
  <script type="application/x-javascript" src="chrome://transparentcrypto/content/graph.js"/>
 
-  <tabbox id="myTabList" selectedIndex="3" flex="1">
+  <tabbox id="myTabList" selectedIndex="2" flex="1">
     <tabs>
       <tab label="List"/>
       <tab label="D3"/>
-      <tab label="Sigma"/>
       <tab label="vis.js"/>
       <tab label="Cytoscape.js"/>
     </tabs>
@@ -105,10 +104,7 @@
 
       </tabpanel>
       <tabpanel>
-        <iframe id="transparentcrypto-iframe-graph" src="chrome://transparentcrypto/content/graph_d3.html" flex="1"></iframe>
-      </tabpanel>
-      <tabpanel>
-        <browser id="transparentcrypto-browser-graph-sigma" src="chrome://transparentcrypto/content/graph_sigma.html" flex="1"></browser>
+        <iframe id="transparentcrypto-iframe-graph-d3" src="chrome://transparentcrypto/content/graph_d3.html" flex="1"></iframe>
       </tabpanel>
       <tabpanel>
         <browser id="transparentcrypto-browser-graph-vis" src="chrome://transparentcrypto/content/graph_vis.html" flex="1"></browser>

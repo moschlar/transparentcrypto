@@ -48,12 +48,6 @@ var data_d3 = {
 	nodemap: {},
     links: [],
 };
-var data_sigma = {
-	nodes: [],
-	nodemap: {},
-    edges: [],
-    edgemap: {}
-};
 var data_vis = {
 	nodes: [],
     edges: [],
@@ -76,10 +70,6 @@ for (var i=0; i < keyList.length; ++i) {
 		data_d3.nodes.push({
 			group: keyTrustLevel.get(keyObj.keyTrust) + 1,
 			name: userId,
-		});
-		data_sigma.nodemap[keyObj.keyId] = true;
-		data_sigma.nodes.push({
-			id: keyObj.keyId,
 		});
 		data_vis.nodes.push({
 			id: keyObj.keyId,
@@ -130,23 +120,6 @@ for (var i=0; i < sigList.length; ++i) {
 				source: s,
 			});
 
-			if (!data_sigma.nodemap[entry.keyId]) {
-				log("###" + entry.keyId);
-				data_sigma.nodemap[entry.keyId] = true;
-				data_sigma.nodes.push({
-					id: entry.keyId,
-				});
-			}
-			var name = keyId + '-' + entry.keyId;
-			if (!data_sigma.edgemap[name]) {
-				log("###" + entry.keyId);
-				data_sigma.edgemap[name] = true;
-				data_sigma.edges.push({
-					id: name,
-					target: keyId,
-					source: entry.keyId,
-				});
-			}
 			data_vis.edges.push({
 				to: keyId,
 				from: entry.keyId,
@@ -164,9 +137,6 @@ for (var i=0; i < sigList.length; ++i) {
 
 delete data_d3.nodemap;
 window._data_d3 = data_d3;
-delete data_sigma.nodemap;
-delete data_sigma.edgemap;
-window._data_sigma = data_sigma;
 window._data_vis = data_vis;
 window._data_cy = data_cy;
 

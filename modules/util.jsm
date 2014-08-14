@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = [ "log", "escapeHTML" ];
+var EXPORTED_SYMBOLS = [ "log", "console", "escapeHTML" ];
 
 const Cc = Components.classes, Ci = Components.interfaces, Cu = Components.utils;
 
@@ -24,6 +24,9 @@ function log(msg) {
     Application.console.log(msg);
     //consoleService.logStringMessage(msg);
 }
+
+// This allows us to use console.log everywhere to be compatible with browsers!
+var console = {log: log};
 
 /**
  * Escape HTML special characters to HTML entities
