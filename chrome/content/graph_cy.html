@@ -2,8 +2,13 @@
 <html>
 <head>
 
-<script src="chrome://transparentcrypto/content/lib/cytoscape.min.js" charset="utf-8"></script>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+
 <script src="resource://transparentcrypto/util.jsm" charset="utf-8"></script>
+
+<script src="chrome://transparentcrypto/content/lib/cytoscape.min.js" charset="utf-8"></script>
+<script src="./lib/cytoscape.min.js" charset="utf-8"></script>
 
 </head>
 
@@ -13,8 +18,11 @@
 
 <script type="text/javascript">
 
-    var _data = window.top._data_cy;
-    //log("graph_cy.html: " + JSON.stringify(_data));
+    try {
+      var _data = window.top._data_cy;
+      //log("graph_cy.html: " + JSON.stringify(_data));
+    } catch (ex) {console.log(ex);}
+
 
     try {
         // initialise cytoscape.js on a html dom element with some options:
@@ -31,12 +39,12 @@
               selector: 'node',
               css: {
                 'content': 'data(name)',
-                'font-family': 'helvetica',
-                'font-size': 14,
-                'text-outline-width': 3,
+                'font-family': 'sans-serif',
+                'font-size': 10,
+                'text-outline-width': 0,
                 'text-outline-color': '#888',
                 'text-valign': 'center',
-                'color': '#fff',
+                'color': '#000',
     /*            'width': 'mapData(weight, 30, 80, 20, 50)',
                 'height': 'mapData(height, 0, 200, 10, 45)',*/
                 'width': '20px',
@@ -63,7 +71,7 @@
               }
             }
           ],
-
+/*
           layout: {
             name: 'breadthfirst',
 
@@ -76,12 +84,35 @@
             roots: undefined, // the roots of the trees
             maximalAdjustments: 0 // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
           },
+*/
+
+          layout: {
+              name: 'concentric',
+
+              fit: true, // whether to fit the viewport to the graph
+              ready: undefined, // callback on layoutready
+              stop: undefined, // callback on layoutstop
+              //padding: 30, // the padding on fit
+              //startAngle: 3/2 * Math.PI, // the position of the first node
+              counterclockwise: false, // whether the layout should go counterclockwise (true) or clockwise (false)
+              minNodeSpacing: 10, // min spacing between outside of nodes (used for radius adjustment)
+              height: undefined, // height of layout area (overrides container height)
+              width: undefined, // width of layout area (overrides container width)
+              concentric: function(){ // returns numeric value for each node, placing higher nodes in levels towards the centre
+                //console.log(this.data("id"));
+                //console.log(-this.data("level"));
+                return -this.data("level");
+              },
+              levelWidth: function(nodes){ // the variation of concentric values in each level
+                return 1;
+              }
+          },
 
           // specify the elements in the graph
           elements: _data,
         }
       );
-    } catch (ex) {log(ex);}
+    } catch (ex) {console.log(ex);}
 </script>
 
 </body>

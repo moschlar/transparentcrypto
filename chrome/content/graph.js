@@ -43,9 +43,10 @@ var transparentcrypto = {};
 
 var keyId = "45D3DBDDFBDD8888";
 
+var nodemap = {}, edgemap = {};
+
 var data_d3 = {
 	nodes: [],
-	nodemap: {},
     links: [],
 };
 var data_vis = {
@@ -65,35 +66,38 @@ try {
 for (var i=0; i < keyList.length; ++i) {
 	var keyObj = keyList[i];
 	try {
-		var userId = EnigConvertGpgToUnicode(keyObj.userId);
-		data_d3.nodemap[keyObj.keyId] = i;
-		data_d3.nodes.push({
-			group: keyTrustLevel.get(keyObj.keyTrust) + 1,
-			name: userId,
-		});
-		data_vis.nodes.push({
-			id: keyObj.keyId,
-			level: keyTrustLevel.get(keyObj.keyTrust),
-			group: keyObj.keyTrust,
-			label: userId.replace(" <", "\n<"),
-			title: "<b>userId:</b> " + escapeHTML(userId) + "<br />" +
-				"<b>keyId:</b> " + keyObj.keyId + "<br />" +
-				"<b>keyTrust:</b> " + keyObj.keyTrust + " (" + keyTrustName.get(keyObj.keyTrust) + ")" + "<br />" +
-				"<b>ownerTrust:</b> " + keyObj.ownerTrust + "<br />" +
-				"<b>secretAvailable:</b> " + keyObj.secretAvailable + "<br />" +
-				"<b>created:</b> " + keyObj.created + "<br />" +
-				"<b>expiry:</b> " + keyObj.expiry + "<br />" +
-				"",
-		});
-		data_cy.nodes.push({data: {
-			id: keyObj.keyId,
-			name: userId,
-		}});
+		if (!nodemap[keyObj.keyId]) {
+			var userId = EnigConvertGpgToUnicode(keyObj.userId);
+			nodemap[keyObj.keyId] = i;  // NodeIdx
+			data_d3.nodes.push({
+				group: keyTrustLevel.get(keyObj.keyTrust) + 1,
+				name: userId.replace(" <", "\n<"),
+			});
+			data_vis.nodes.push({
+				id: keyObj.keyId,
+				level: keyTrustLevel.get(keyObj.keyTrust),
+				group: keyObj.keyTrust,
+				label: userId.replace(" <", "\n<"),
+				title: "<b>userId:</b> " + escapeHTML(userId) + "<br />" +
+					"<b>keyId:</b> " + keyObj.keyId + "<br />" +
+					"<b>keyTrust:</b> " + keyObj.keyTrust + " (" + keyTrustName.get(keyObj.keyTrust) + ")" + "<br />" +
+					"<b>ownerTrust:</b> " + keyObj.ownerTrust + "<br />" +
+					"<b>secretAvailable:</b> " + keyObj.secretAvailable + "<br />" +
+					"<b>created:</b> " + keyObj.created + "<br />" +
+					"<b>expiry:</b> " + keyObj.expiry + "<br />" +
+					"",
+			});
+			data_cy.nodes.push({data: {
+				id: keyObj.keyId,
+				name: userId,
+				level: keyTrustLevel.get(keyObj.keyTrust),
+			}});
+		} else {log('Duplicate node keyId: ' + keyObj.keyId);}
 	} catch (ex) {Components.utils.reportError(ex);log('graph.js: ' + ex);}
 }
 
 // Get index of central key
-var t = data_d3.nodemap[keyId];
+var t = nodemap[keyId];
 
 try {
 	log('graph.js: ' + 'getSigs')
@@ -105,37 +109,57 @@ for (var i=0; i < sigList.length; ++i) {
 	try {
 		//log(JSON.stringify(entry));
 		if (entry.type === "sig") {
-			var s = data_d3.nodemap[entry.keyId];
-			if (!s) {
-				log("###" + entry.keyId);
-				s = data_d3.nodes.length;
-				data_d3.nodemap[entry.keyId] = s;
-				data_d3.nodes.push({
-					group: 5,
-					name: EnigConvertGpgToUnicode(entry.userId),
-				});
-			}
-			data_d3.links.push({
-				target: t,
-				source: s,
-			});
+			var edgeId = keyId + '-' + entry.keyId;
+			if (!edgemap[edgeId]) {
+				edgemap[edgeId] = true;
+				var nodeIdx = nodemap[entry.keyId];
+				if (!nodeIdx) {
+					log("Missing node for " + entry.keyId);
+					nodeIdx = Object.keys(nodemap).length;
+					nodemap[entry.keyId] = nodeIdx;
+					var userId = EnigConvertGpgToUnicode(entry.userId);
+					data_d3.nodes.push({
+						group: 9,
+						name: userId.replace(" <", "\n<"),
+					});
+					data_vis.nodes.push({
+						id: entry.keyId,
+						level: 10,
+						group: 9,
+						label: userId.replace(" <", "\n<"),
+					});
+					data_cy.nodes.push({data: {
+						id: entry.keyId,
+						name: userId,
+						level: 10,
+					}});
+				}
 
-			data_vis.edges.push({
-				to: keyId,
-				from: entry.keyId,
-			});
-			data_cy.edges.push({data: {
-				target: keyId,
-				source: entry.keyId,
-			}});
+				data_d3.links.push({
+					target: t,
+					source: nodeIdx,
+				});
+				data_vis.edges.push({
+					to: keyId,
+					from: entry.keyId,
+				});
+				data_cy.edges.push({data: {
+					target: keyId,
+					source: entry.keyId,
+				}});
+
+			} else {log("Duplicate edgeId: " + edgeId);}
 		}
 	} catch (ex) {Components.utils.reportError(ex);log('graph.js: ' + ex);}
 }
 
+log(JSON.stringify(nodemap));
+log(JSON.stringify(edgemap));
+
+//log('graph.js: ' + JSON.stringify(data_d3));
 //log('graph.js: ' + JSON.stringify(data_vis));
 //log('graph.js: ' + JSON.stringify(data_cy));
 
-delete data_d3.nodemap;
 window._data_d3 = data_d3;
 window._data_vis = data_vis;
 window._data_cy = data_cy;

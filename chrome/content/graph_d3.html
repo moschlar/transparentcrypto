@@ -1,6 +1,10 @@
 <!-- http://bl.ocks.org/mbostock/4062045 -->
+<!-- http://bl.ocks.org/mbostock/2706022 -->
 <html>
 <head>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
 
 <style>
 
@@ -14,10 +18,19 @@
   stroke-opacity: .6;
 }
 
+text {
+  font: 10pt sans-serif;
+  pointer-events: none;
+}
 </style>
 
-<script src="chrome://transparentcrypto/content/lib/d3.min.js" charset="utf-8"></script>
 <script src="resource://transparentcrypto/util.jsm" charset="utf-8"></script>
+
+<script src="chrome://transparentcrypto/content/lib/d3.min.js" charset="utf-8"></script>
+<script src="./lib/d3.js" charset="utf-8"></script>
+<!--<script src="./lib/colorbrewer.v1.min.js" charset="utf-8"></script>-->
+<script src="chrome://transparentcrypto/content//lib/cola.v3.min.js" charset="utf-8"></script>
+<script src="./lib/cola.v3.min.js" charset="utf-8"></script>
 
 </head>
 
@@ -31,14 +44,23 @@
       //log("graph_d3.html: " + JSON.stringify(_data));
   } catch (ex) {log(ex);}
 
+
   var width = 600,
       height = 400;
 
-  var color = d3.scale.category20();
+  var color = d3.scale.category10();
+  //var color = d3.scale.ordinal().domain([0,1,2,3,4,5,6,7,8,9,10]).range(colorbrewer.RdYlGn[9]);
 
+/*
   var force = d3.layout.force()
-      .charge(-120)
-      .linkDistance(30)
+      .charge(-100)
+      .linkDistance(100)
+      .size([width, height]);
+*/
+  var force = cola.d3adaptor()
+      .linkDistance(100)
+      .avoidOverlaps(true)
+      .flowLayout('y', function(d){ return _data.nodes[d.source].group * 50; })
       .size([width, height]);
 
   var svg = d3.select("#container").append("svg")
@@ -60,18 +82,24 @@
         .data(_data.nodes)
       .enter().append("g")
         .attr("class", "node")
+        .attr("title", function(d) { return d.name; })
         .call(force.drag);
 
     node.append("circle")
-        .attr("r", 5);
-        //.style("fill", function(d) { return color(d.group); });
+        .attr("r", 5)
+        .style("fill", function(d) { return color(d.group); });
 
-    node.append("title")
-        .text(function(d) { return d.name; });
-    node.append("text")
+    var t = node.append("text")
         .attr("dx", "1em")
+        .attr("dy", "0em");
+      t.append("tspan")
+        .attr("x", "0")
         .attr("dy", "0em")
-        .text(function(d) { return d.name; });
+        .text(function(d) { return d.name.split(/\n/, 2)[0]; })
+      t.append("tspan")
+        .attr("x", "1em")
+        .attr("dy", "1.2em")
+        .text(function(d) { return d.name.split(/\n/, 2)[1]; });
 
     force.on("tick", function() {
       link.attr("x1", function(d) { return d.source.x; })

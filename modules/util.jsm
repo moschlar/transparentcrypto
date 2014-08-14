@@ -26,7 +26,8 @@ function log(msg) {
 }
 
 // This allows us to use console.log everywhere to be compatible with browsers!
-var console = {log: log};
+// console.assert is used by cola.js
+var console = {log: log, assert: function(){}};
 
 /**
  * Escape HTML special characters to HTML entities
