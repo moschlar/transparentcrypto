@@ -4,7 +4,7 @@
 
 <style>
 
-.node {
+.node circle {
   stroke: #fff;
   stroke-width: 1.5px;
 }
@@ -45,7 +45,6 @@
       .attr("width", width)
       .attr("height", height);
 
-  try {
     force.nodes(_data.nodes)
         .links(_data.links)
         .start();
@@ -59,13 +58,19 @@
 
     var node = svg.selectAll(".node")
         .data(_data.nodes)
-      .enter().append("circle")
+      .enter().append("g")
         .attr("class", "node")
-        .attr("r", 5)
-        .style("fill", function(d) { return color(d.group); })
         .call(force.drag);
 
+    node.append("circle")
+        .attr("r", 5);
+        //.style("fill", function(d) { return color(d.group); });
+
     node.append("title")
+        .text(function(d) { return d.name; });
+    node.append("text")
+        .attr("dx", "1em")
+        .attr("dy", "0em")
         .text(function(d) { return d.name; });
 
     force.on("tick", function() {
@@ -73,20 +78,21 @@
           .attr("y1", function(d) { return d.source.y; })
           .attr("x2", function(d) { return d.target.x; })
           .attr("y2", function(d) { return d.target.y; });
-
-      node.attr("cx", function(d) { return d.x; })
-          .attr("cy", function(d) { return d.y; });
+      node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+      //node.attr("cx", function(d) { return d.x; })
+      //    .attr("cy", function(d) { return d.y; });
     });
-  } catch (ex) {log(ex);}
 
   function resize(e){
+    try {
       var width = document.getElementById('container').clientWidth;
       var height = document.getElementById('container').clientHeight;
 
       svg.attr('width', width);
       svg.attr('height', height);
       force.size([width, height]).resume();
-  }
+    } catch (ex) {log(ex);}
+  };
 
   window.addEventListener('resize', resize);
 
