@@ -34,7 +34,7 @@ const keyTrustName = {
 	"i": "The key is invalid",
 	"o": "Unknown",
 	get: function(x) {
-		return this[x] === undefined ? "Totally unknown" : this[x];
+		return this[x] === undefined ? "Totally unknown validity" : this[x];
 	}
 };
 
@@ -64,8 +64,9 @@ var data_cy = {
 };
 
 try {
+	log('graph.js: ' + 'getKeys')
 	var keyList = getKeys(window);
-} catch (ex) {Components.utils.reportError(ex);}
+} catch (ex) {Components.utils.reportError(ex); log('graph.js: ' + ex);}
 
 for (var i=0; i < keyList.length; ++i) {
 	var keyObj = keyList[i];
@@ -98,14 +99,16 @@ for (var i=0; i < keyList.length; ++i) {
 			id: keyObj.keyId,
 			name: userId,
 		}});
-	} catch (ex) {Components.utils.reportError(ex);log(ex);}
+	} catch (ex) {Components.utils.reportError(ex);log('graph.js: ' + ex);}
 }
 
 // Get index of central key
 var t = data_d3.nodemap[keyId];
-log(t);
 
-var sigList = getSigs(keyId);
+try {
+	log('graph.js: ' + 'getSigs')
+	var sigList = getSigs(window, keyId);
+} catch (ex) {Components.utils.reportError(ex); log('graph.js: ' + ex);}
 
 for (var i=0; i < sigList.length; ++i) {
 	var entry = sigList[i];
@@ -153,11 +156,11 @@ for (var i=0; i < sigList.length; ++i) {
 				source: entry.keyId,
 			}});
 		}
-	} catch (ex) {Components.utils.reportError(ex);log(ex);}
+	} catch (ex) {Components.utils.reportError(ex);log('graph.js: ' + ex);}
 }
 
-//log("graph.js: " + JSON.stringify(data_vis));
-//log("graph.js: " + JSON.stringify(data_cy));
+//log('graph.js: ' + JSON.stringify(data_vis));
+//log('graph.js: ' + JSON.stringify(data_cy));
 
 delete data_d3.nodemap;
 window._data_d3 = data_d3;

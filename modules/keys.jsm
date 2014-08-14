@@ -27,6 +27,7 @@ const sigRowField = {
 };
 
 function getKeys(window) {
+	log('keys.jsm: ' + 'getKeys');
 
 	var keys = [];
 
@@ -36,8 +37,8 @@ function getKeys(window) {
 		//EnigmailFuncs.loadKeyList(window, refresh, keyListObj, sortColumn, sortDirection);
 		EnigmailFuncs.loadKeyList(window, false, keyListObj, "userid", 1);
 	} catch (ex) {
-		Components.utils.reportError(ex);
-		log(ex);
+		Cu.reportError(ex);
+		log('keys.jsm: ' + ex);
 		return undefined;
 	}
 
@@ -95,15 +96,17 @@ function getKeys(window) {
 */
 }
 
-function getSigs(keyId) {
+function getSigs(window, keyId) {
+	log('keys.jsm: ' + 'getSigs');
 
 	var sigs = [];
 
 	// From enigmailViewKeySigDlg.xul
 
-	var enigmailSvc = GetEnigmailSvc();
+	var enigmailSvc = EnigmailCommon.getService(window);
 	if (!enigmailSvc) {
-		log(EnigGetString("accessError"));
+		Cu.reportError(EnigGetString("accessError"));
+		log('keys.jsm: ' + EnigGetString("accessError"));
 		return undefined;
 	}
 
@@ -113,7 +116,8 @@ function getSigs(keyId) {
 	var sigList = enigmailSvc.getKeySig("0x" + keyId, exitCodeObj, errorMsgObj);
 
 	if (exitCodeObj.value != 0) {
-		log(errorMsgObj.value);
+		Cu.reportError(errorMsgObj.value);
+		log('keys.jsm: ' + errorMsgObj.value);
 		return undefined;
 	}
 
@@ -123,23 +127,25 @@ function getSigs(keyId) {
 
 	for (var i=0; i<aSigList.length; ++i) {
 		if (aSigList[i]) {
-			var listRow = aSigList[i].split(/:/);
-			//log(listRow);
-			//log(listRow.length);
-			// sig,,,1,45D3DBDDFBDD8888,1303911907,,,,Moritz Schlarb <moschlar@metalabs.de>,18x,,,,,2,
-			var entry = {
-				type: listRow[keyRowField.type],
-				keyValidity: listRow[keyRowField.keyValidity],
-				keyId: listRow[keyRowField.keyId],
-				created: listRow[keyRowField.created],
-				expiry: listRow[keyRowField.expiry],
-				uidId: listRow[keyRowField.uidId],
-				ownerTrust: listRow[keyRowField.ownerTrust],
-				userId: EnigConvertGpgToUnicode(listRow[keyRowField.userId]),
-				sigType: listRow[keyRowField.sigType],
-				keyUseFor: listRow[keyRowField.keyUseFor],
-			};
-			sigs.push(entry);
+			try {
+				var listRow = aSigList[i].split(/:/);
+				//log(listRow);
+				// sig,,,1,45D3DBDDFBDD8888,1303911907,,,,Moritz Schlarb <moschlar@metalabs.de>,18x,,,,,2,
+				var entry = {
+					type: listRow[sigRowField.type],
+					keyValidity: listRow[sigRowField.keyValidity],
+					keyId: listRow[sigRowField.keyId],
+					created: listRow[sigRowField.created],
+					expiry: listRow[sigRowField.expiry],
+					uidId: listRow[sigRowField.uidId],
+					ownerTrust: listRow[sigRowField.ownerTrust],
+					userId: EnigmailCommon.convertGpgToUnicode(listRow[sigRowField.userId]),
+					//userId: listRow[sigRowField.userId],
+					sigType: listRow[sigRowField.sigType],
+					keyUseFor: listRow[sigRowField.keyUseFor],
+				};
+				sigs.push(entry);
+			} catch (ex) {Cu.reportError(ex);log('keys.jsm: ' + ex);}
 		}
 	}
 
