@@ -18,7 +18,8 @@ var transparentcrypto = {
     editor: null,
     preview_window: null,
 
-    publicKey: null,
+    recipients: null,
+    publicKeys: null,
 
     showPreviewWindow: function() {
         log('showPreviewWindow');
@@ -35,31 +36,44 @@ var transparentcrypto = {
         };
     },
 
-    getPublicKey: function() {
-        var uid = "0xFBDD8888";
-        try {
+    getPublicKeys: function(recipients) {
+        if (this.recipients && recipients && arrayEquality(this.recipients, recipients) && this.publicKeys) {
+            // Should be okay to be lazy
+            return this.publicKeys;
+        } else {
+            var publicKeys = new Array;
             var enigmailSvc = EnigmailCommon.getService(window);
             if (!enigmailSvc) throw("!enigmailSvc");
 
-            var exitCodeObj = {};
-            var errorMsgObj = {};
+            for (var i = 0; i < recipients.length; ++i ) {
+                var uid = recipients[i];
+                if (uid) {
+                    try {
+                        var exitCodeObj = {};
+                        var errorMsgObj = {};
 
-            var key = enigmailSvc.extractKey(window, 0, uid, undefined, exitCodeObj, errorMsgObj);
-            if (exitCodeObj.value != 0) {
-              throw(errorMsgObj.value);
+                        var key = enigmailSvc.extractKey(window, 0, uid, undefined, exitCodeObj, errorMsgObj);
+                        if (exitCodeObj.value != 0) {
+                            throw(errorMsgObj.value);
+                        }
+                        //log("key: " + key);
+
+                        var publicKey = openpgp.key.readArmored(key);
+                        //log("publicKey: " + publicKey);
+
+                        for (var j=0; j < publicKey.keys.length; ++j)
+                            publicKeys.push(publicKey.keys[j]);
+                        //publicKeys.concat(publicKey.keys);
+                        //log(publicKeys);
+                    } catch (ex) {
+                        Components.utils.reportError(ex);
+                        log(ex);
+                    }
+                }
             }
-
-            //log("key: " + key);
-
-            this.publicKey = openpgp.key.readArmored(key);
-
-            //log("publicKey: " + this.publicKey);
-
-            return this.publicKey;
-        } catch (ex) {
-            Components.utils.reportError(ex);
-            log(ex);
-            return undefined;
+            this.publicKeys = publicKeys;
+            this.recipients = recipients;
+            return publicKeys;
         }
     },
 
@@ -114,12 +128,20 @@ Content-Transfer-Encoding: 8bit
 
     makePreview: function(headers, body) {
         //log('makePreview');
+        var crypt = '';
         var cipherText = '';
         try {
-            var publicKey = this.publicKey || this.getPublicKey();
-            cipherText = openpgp.encryptMessage(publicKey.keys, body);
+            var recipients = headers['to'] || '' + headers['cc'] || '' + headers['bcc'] || '';
+            recipients = recipients.split(',');
+            var publicKeys = this.getPublicKeys(recipients);
+            //log(JSON.stringify(publicKeys));
+            cipherText = openpgp.encryptMessage(publicKeys, body);
             //log('cipherText: ' + cipherText);
-        } catch (ex) {Components.utils.reportError(ex); log(ex);}
+        } catch (ex) {
+            Components.utils.reportError(ex);
+            log(ex);
+            cipherText = '...\nThere was an error encrypting this message:\n' + ex + '\n...';
+        }
 
 /*
         cryptdata = '';
@@ -139,10 +161,16 @@ Content-Transfer-Encoding: 8bit
             .replace(/^Comment:.*\r?\n?/m, '')
             .replace(/^\s*\r?\n?/gm, '');
 
-        crypt = ''
-            + 'From: ' + headers['from'] + '\n'
-            + 'To: ' + headers['to'] + '\n'
-            + 'Subject: ' + headers['subject'] + '\n' + '\n'
+        if (headers['from'])
+            crypt += 'From: ' + headers['from'] + '\n';
+        if (headers['to'])
+            crypt += 'To: ' + headers['to'] + '\n';
+        if (headers['cc'])
+            crypt += 'Cc: ' + headers['cc'] + '\n';
+        if (headers['subject'])
+            crypt += 'Subject: ' + headers['subject'] + '\n';
+
+        crypt += '\n'
             //+ '\n-----BEGIN PGP MESSAGE-----\n'
             //+ 'Comment: This is just a nonsene preview of your mail.\n\n'
             + cipherText

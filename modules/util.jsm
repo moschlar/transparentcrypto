@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = [ "log", "console", "escapeHTML" ];
+var EXPORTED_SYMBOLS = [ "log", "console", "escapeHTML", "arrayEquality" ];
 
 const Cc = Components.classes, Ci = Components.interfaces, Cu = Components.utils;
 
@@ -42,5 +42,14 @@ function escapeHTML(s) {
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
 }
+
+function arrayEquality(a, b) {
+    var i = a.length;
+    if (i != b.length) return false;
+    while (i--) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
+};
 
 log('util.jsm: ' + 'loaded')
