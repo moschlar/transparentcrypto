@@ -1,8 +1,13 @@
+/*
+TODO: Listen for changes in msgComposeFields
+TODO: Preview window sizing
+*/
+
 Components.utils.import("resource://transparentcrypto/util.jsm");
 
 try {
     Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-    //Components.utils.import("resource://enigmail/commonFuncs.jsm");
+    Components.utils.import("resource://enigmail/commonFuncs.jsm");
     //Components.utils.import("resource://enigmail/keyManagement.jsm");
 } catch (ex) {Components.utils.reportError(ex);log(ex);}
 
@@ -90,11 +95,11 @@ var transparentcrypto = {
         */
         try {
             return {
-                from: gMsgCompose.compFields.from,
+                from: gMsgCompose.compFields.from || gMsgCompose.identity.identityName,
                 to: gMsgCompose.compFields.to,
                 cc: gMsgCompose.compFields.cc,
                 bcc: gMsgCompose.compFields.bcc,
-                subject: gMsgCompose.compFields.subject || document.getElementById("msgSubject").value,
+                subject: gMsgCompose.compFields.subject || document.getElementById('msgSubject').value,
             };
         } catch (ex) {
             Components.utils.reportError(ex); log(ex);
@@ -126,13 +131,35 @@ Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 8bit
 */
 
+    getRecipients: function(headers) {
+        var recipients = new Array();
+        //var recipients = headers['to'] || '' + headers['cc'] || '' + headers['bcc'] || '';
+        //recipients = recipients.split(',');
+
+        var splitRecipients = gMsgCompose.compFields.splitRecipients;
+
+        var fields = ['to', 'cc', 'bcc'];
+        for (var f=0; f < fields.length; ++f) {
+            var field = fields[f];
+            if (headers[field]) {
+                var recList = undefined;
+                var arrLen = {};
+                recList = splitRecipients(headers[field], true, arrLen)                    ;
+                for (var i=0; i < recList.length; ++i) {
+                    recipients.push(EnigmailFuncs.stripEmail(recList[i]));
+                }
+            }
+        }
+
+        return recipients;
+    },
+
     makePreview: function(headers, body) {
         //log('makePreview');
-        var crypt = '';
+        var preview = '';
         var cipherText = '';
         try {
-            var recipients = headers['to'] || '' + headers['cc'] || '' + headers['bcc'] || '';
-            recipients = recipients.split(',');
+            var recipients = this.getRecipients(headers);
             var publicKeys = this.getPublicKeys(recipients);
             //log(JSON.stringify(publicKeys));
             cipherText = openpgp.encryptMessage(publicKeys, body);
@@ -149,9 +176,9 @@ Content-Transfer-Encoding: 8bit
             cryptdata += Math.random().toString(36).substr(2);
         }
         cryptdata = btoa(cryptdata);
-        crypt = '';
+        preview = '';
         for (i=0; i < cryptdata.length; i += this.MAX_LINE_LENGTH) {
-            crypt += cryptdata.substr(i, this.MAX_LINE_LENGTH) + '\n';
+            preview += cryptdata.substr(i, this.MAX_LINE_LENGTH) + '\n';
         }
 */
 
@@ -162,28 +189,29 @@ Content-Transfer-Encoding: 8bit
             .replace(/^\s*\r?\n?/gm, '');
 
         if (headers['from'])
-            crypt += 'From: ' + headers['from'] + '\n';
+            preview += 'From: ' + headers['from'] + '\n';
         if (headers['to'])
-            crypt += 'To: ' + headers['to'] + '\n';
+            preview += 'To: ' + headers['to'] + '\n';
         if (headers['cc'])
-            crypt += 'Cc: ' + headers['cc'] + '\n';
+            preview += 'Cc: ' + headers['cc'] + '\n';
         if (headers['subject'])
-            crypt += 'Subject: ' + headers['subject'] + '\n';
+            preview += 'Subject: ' + headers['subject'] + '\n';
 
-        crypt += '\n'
+        preview += '\n'
             //+ '\n-----BEGIN PGP MESSAGE-----\n'
             //+ 'Comment: This is just a nonsene preview of your mail.\n\n'
             + cipherText
             //+ '\n-----END PGP MESSAGE-----'
             ;
-        return crypt;
+
+        return preview;
     },
 
     setPreviewContent: function(data) {
         //log('setPreviewContent');
         try {
             var elem = this.preview_window.document.getElementById('email-preview');
-            elem.innerHTML = data;
+            elem.innerHTML = escapeHTML(data);
         } catch (ex) { Components.utils.reportError(ex); log(ex); };
     },
 

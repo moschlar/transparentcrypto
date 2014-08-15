@@ -3,6 +3,6 @@
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <hbox flex="1">
-    <description id="email-preview" style="white-space: pre-wrap; font-family: monospace; font-size: smaller;" flex="1">...</description>
+    <description id="email-preview" style="white-space: pre-wrap; font-family: monospace; font-size: smaller;" flex="1"></description>
   </hbox>
 </window>
