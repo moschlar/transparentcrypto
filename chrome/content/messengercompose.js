@@ -118,11 +118,10 @@ Content-Transfer-Encoding: 8bit
         try {
             var publicKey = this.publicKey || this.getPublicKey();
             cipherText = openpgp.encryptMessage(publicKey.keys, body);
-
-            log('cipherText: ' + cipherText);
+            //log('cipherText: ' + cipherText);
         } catch (ex) {Components.utils.reportError(ex); log(ex);}
 
-        /*
+/*
         cryptdata = '';
         while (cryptdata.length < body.length) {
             cryptdata += Math.random().toString(36).substr(2);
@@ -132,7 +131,14 @@ Content-Transfer-Encoding: 8bit
         for (i=0; i < cryptdata.length; i += this.MAX_LINE_LENGTH) {
             crypt += cryptdata.substr(i, this.MAX_LINE_LENGTH) + '\n';
         }
-        */
+*/
+
+        // Replace Version and Comment fields and emtpy lines
+        cipherText = cipherText
+            .replace(/^Version:.*\r?\n?/m, '')
+            .replace(/^Comment:.*\r?\n?/m, '')
+            .replace(/^\s*\r?\n?/gm, '');
+
         crypt = ''
             + 'From: ' + headers['from'] + '\n'
             + 'To: ' + headers['to'] + '\n'
