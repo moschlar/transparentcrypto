@@ -23,7 +23,8 @@
     try {
       var _data = window.top._data_vis;
       log("graph_vis.html: " + JSON.stringify(_data));
-    } catch (ex) {log(ex);}
+    } catch (ex) {console.log(ex);}
+
 
 
     var container = document.getElementById('container');
@@ -34,53 +35,68 @@
     };
 
     var options = {
-        nodes: {shape: "box"},
+        nodes: {shape: "box", color: "gray"},
         edges: {
           style: "arrow",
           inheritColor: "from",
+          widthSelectionMultiplier: 1.5,
         },
-        groups: {
-          u: {
-            color: "green",
+        groups: { // http://colorbrewer2.org/?type=diverging&scheme=RdYlGn&n=7
+          u: { // ultimately valid
+            color: "#1a9850",
           },
-          f: {
-            color: "lightgreen",
+          f: { // fully valid
+            color: "#91cf60",
           },
-          m: {
-            color: "yellow",
+          m: { // marginal valid
+            color: "#d9ef8b",
           },
-          n: {
-            color: "darkyellow",
+          n: { // valid
+            color: "#ffffbf",
           },
-          q: {
-            color: "red",
+          q: { // undefined
+            color: "#fee08b",
           },
-          "-": {
-            color: "red",
+          "-": { // unknown
+            color: "#fee08b",
           },
-          e: {
-            color: "red",
+          e: { // expired
+            color: "#fc8d59",
+          },
+          r: { // revoked
+            color: "#fc8d59",
+          },
+          d: { // disabled
+            color: "#fc8d59",
+          },
+          i: { // invalid
+            color: "#d73027",
+          },
+          o: { // unknown
+            color: "#d73027",
           },
         },
         hierarchicalLayout: {
           enabled: true,
           nodeSpacing: 300,
         },
-        stabilize: false,
+        stabilize: true,
         smoothCurves: false,
-        /*physics: {
-          hierarchicalRepulsion: {
-            nodeDistance: 300,
-          },
-        },*/
+        physics: {
+            hierarchicalRepulsion: {
+                nodeDistance: 300
+            }
+        },
         navigation: true,
         keyboard: true,
         //configurePhysics: true,
-        //dataManipulation: true, // http://visjs.org/docs/network.html#Data_manipulation_custom
+/*
+        dataManipulation: true, // http://visjs.org/docs/network.html#Data_manipulation_custom
         onAdd: function(data, callback) {
           data.level = 1;
           callback(data);
         },
+*/
     };
 
     try {
@@ -88,10 +104,21 @@
       window.addEventListener("resize", function(target) {
           try {
             network.redraw();
-            network.zoomExtent(false, true);
+            network.zoomExtent();
           } catch (ex) {log(ex);}
         });
+      function addNode() {
+          data.nodes.add({"id":"abcd","level":0,"group":"u","label":"buh","title":"buh"});
+      }
+      window.setTimeout(addNode, 5000);
     } catch (ex) {log(ex);}
+
+    try {
+        Components.utils.import("resource://transparentcrypto/util.jsm");
+        Components.utils.import("resource://transparentcrypto/keys.jsm");
+        Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+    } catch (ex) {log(ex);}
+
 </script>
 
 </body>

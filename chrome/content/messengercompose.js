@@ -1,6 +1,7 @@
 /*
 TODO: Listen for changes in msgComposeFields
 TODO: Preview window sizing
+TODO: Performance
 */
 
 Components.utils.import("resource://transparentcrypto/util.jsm");
