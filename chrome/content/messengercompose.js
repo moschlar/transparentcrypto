@@ -16,6 +16,7 @@ try {
     log(window.openpgp.config.versionstring);
 } catch (ex) { Components.utils.reportError(ex); log(ex); };
 
+
 /* Create namespace */
 var transparentcrypto = {
 
@@ -146,7 +147,7 @@ Content-Transfer-Encoding: 8bit
             if (headers[field]) {
                 var recList = undefined;
                 var arrLen = {};
-                recList = splitRecipients(headers[field], true, arrLen)                    ;
+                recList = splitRecipients(headers[field], true, arrLen);
                 for (var i=0; i < recList.length; ++i) {
                     recipients.push(EnigmailFuncs.stripEmail(recList[i]));
                 }
@@ -159,36 +160,45 @@ Content-Transfer-Encoding: 8bit
     makePreview: function(headers, body) {
         //log('makePreview');
         var preview = '';
-        var cipherText = '';
+        var content = '';
+
+        this.setStatusBarContent('');
+        content = body;
+
         try {
-            var recipients = this.getRecipients(headers);
-            var publicKeys = this.getPublicKeys(recipients);
-            //log(JSON.stringify(publicKeys));
-            cipherText = openpgp.encryptMessage(publicKeys, body);
-            //log('cipherText: ' + cipherText);
-        } catch (ex) {
-            Components.utils.reportError(ex);
-            log(ex);
-            cipherText = '...\nThere was an error encrypting this message:\n' + ex + '\n...';
-        }
+            //log(Enigmail.msg.sendMode);
+            //var sendEncrypted = (Enigmail.msg.sendMode & nsIEnigmail.SEND_ENCRYPTED);
+            var sendEncrypted = (Enigmail.msg.sendMode & 0x002);
+            if (sendEncrypted) {
+                try {
+                    var recipients = this.getRecipients(headers);
+                    var publicKeys = this.getPublicKeys(recipients);
+                    //log(JSON.stringify(publicKeys));
+                    if ((publicKeys) && (publicKeys.length > 0)) {
+                        var cipherText = openpgp.encryptMessage(publicKeys, body);
+                        //log('cipherText: ' + cipherText);
 
-/*
-        cryptdata = '';
-        while (cryptdata.length < body.length) {
-            cryptdata += Math.random().toString(36).substr(2);
-        }
-        cryptdata = btoa(cryptdata);
-        preview = '';
-        for (i=0; i < cryptdata.length; i += this.MAX_LINE_LENGTH) {
-            preview += cryptdata.substr(i, this.MAX_LINE_LENGTH) + '\n';
-        }
-*/
+                        // Replace Version and Comment fields and emtpy lines
+                        cipherText = cipherText
+                            .replace(/^Version:.*\r?\n?/m, '')
+                            .replace(/^Comment:.*\r?\n?/m, '')
+                            .replace(/^\s*\r?\n?/gm, '');
 
-        // Replace Version and Comment fields and emtpy lines
-        cipherText = cipherText
-            .replace(/^Version:.*\r?\n?/m, '')
-            .replace(/^Comment:.*\r?\n?/m, '')
-            .replace(/^\s*\r?\n?/gm, '');
+                        content = cipherText;
+                    } else {
+                        this.setStatusBarContent('Could not get any key for recipients!')
+                    }
+                } catch (ex) {
+                    Components.utils.reportError(ex);
+                    log(ex);
+                    //content = '...\nThere was an error encrypting this message:\n' + ex + '\n...';
+                    this.setStatusBarContent('There was an error encrypting this message!')
+                }
+            } else {
+                this.setStatusBarContent('Not sending encrypted eMail!')
+            }
+        } catch (ex) { Components.utils.reportError(ex); log(ex); }
+
 
         if (headers['from'])
             preview += 'From: ' + headers['from'] + '\n';
@@ -199,21 +209,24 @@ Content-Transfer-Encoding: 8bit
         if (headers['subject'])
             preview += 'Subject: ' + headers['subject'] + '\n';
 
-        preview += '\n'
-            //+ '\n-----BEGIN PGP MESSAGE-----\n'
-            //+ 'Comment: This is just a nonsene preview of your mail.\n\n'
-            + cipherText
-            //+ '\n-----END PGP MESSAGE-----'
-            ;
+        preview += '\n' + content;
 
         return preview;
     },
 
-    setPreviewContent: function(data) {
+    setStatusBarContent: function(status) {
+        //log('setStatusBarContent');
+        try {
+            var elem = this.preview_window.document.getElementById('transparentcrypto-preview-statusbarpanel');
+            elem.label = status;
+        } catch (ex) { Components.utils.reportError(ex); log(ex); }
+    },
+
+    setPreviewContent: function(preview) {
         //log('setPreviewContent');
         try {
             var elem = this.preview_window.document.getElementById('email-preview');
-            elem.innerHTML = escapeHTML(data);
+            elem.innerHTML = escapeHTML(preview);
         } catch (ex) { Components.utils.reportError(ex); log(ex); };
     },
 
@@ -224,8 +237,8 @@ Content-Transfer-Encoding: 8bit
             try {
                 var headers = this.getHeaders();
                 var body = this.getEditorContent();
-                var data = this.makePreview(headers, body);
-                this.setPreviewContent(data);
+                var preview = this.makePreview(headers, body);
+                this.setPreviewContent(preview);
             } catch (ex) { Components.utils.reportError(ex); log(ex); };
         } else {
             log('No preview window')
