@@ -35,6 +35,7 @@ var transparentcrypto = {
                 "chrome://transparentcrypto/content/preview.xul",
                 "transparentcrypto-preview-window",
                 "chrome,centerscreen,resizable,width=400,height=300");
+            this.updatePreview();
             return this.preview_window;
         } catch (ex) {
             Components.utils.reportError(ex); log(ex);
@@ -218,6 +219,7 @@ Content-Transfer-Encoding: 8bit
 
     updatePreview: function() {
         //log('updatePreview');
+        //log(this);
         if (this.preview_window) {
             try {
                 var headers = this.getHeaders();
@@ -248,8 +250,11 @@ Content-Transfer-Encoding: 8bit
             try {
                 transparentcrypto.editor = gMsgCompose.editor;
             } catch (ex) { Components.utils.reportError(ex); log(ex); };
+            try {
+                document.getElementById("addresses-box").addEventListener("change", transparentcrypto.updatePreview.bind(transparentcrypto));
+            } catch (ex) { Components.utils.reportError(ex); log(ex); };
         },
-        NotifyComposeBodyReady: function() {},
+        NotifyComposeBodyReady: function() {}, // TODO: what is this?
         ComposeProcessDone: function(aResult) {},
         SaveInFolderDone: function(folderURI) {}
     },
