@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
- <script type="application/x-javascript" src="chrome://transparentcrypto/content/test.js"/>
- <statusbar id="status-bar">
-  <statusbarpanel id="test" label="Test"/>
-  <button label="Hello" oncommand="sayHello();"/>
- </statusbar>
-</overlay>
