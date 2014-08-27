@@ -182,7 +182,7 @@ TODO: Statusbar mit Loading-Hinweis (x/y keys loaded)
 
 	//window.onload = function() {
 	window.setTimeout(function() {
-		var nodemap = {}, edgemap = {};
+		var nodemap = {}, edgemap = {}, dummyedgemap = {};
 
 		var data_vis = {
 			nodes: [],
@@ -221,12 +221,32 @@ TODO: Statusbar mit Loading-Hinweis (x/y keys loaded)
 					} else {log('Duplicate node keyId: ' + keyObj.keyId);}
 				} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 			}
+
+			try {
+				// Create invisible dummy-edges for each node
+				var centralNodes = data.nodes.get({filter: function(key) {return key.keyObj.secretAvailable}});
+				log(JSON.stringify(centralNodes));
+				data.nodes.forEach(function (node) {
+					var to = node.id;
+					var from = centralNodes[0].id;
+					var edgeId = to + '-' + from;
+					var edge = {
+						id: edgeId,
+						to: to,
+						from: from,
+						color: "#FFFFFF",
+					};
+					dummyedgemap[edgeId] = true;
+					data.edges.add(edge);
+				}, {filter: function(key) {return !key.keyObj.secretAvailable}});
+			} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
+
 			return keyList;
 		}
 
 		window.top.document.getElementById("transparentcrypto-graph-progress").value = 0;
 		window.top.document.getElementById("transparentcrypto-graph-progress-text").label = "0%";
-		window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label = "Keys loaded";
+		window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label = "Loading keys...";
 
 		var keyList = addKeys();
 
@@ -305,7 +325,9 @@ TODO: Statusbar mit Loading-Hinweis (x/y keys loaded)
 								//data_vis.edges.push(edge);
 								data.edges.add(edge);
 							}
-						} else {log("Duplicate edgeId: " + edgeId);}
+						} else {
+							//log("Duplicate edgeId: " + edgeId);
+						}
 					}
 				} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 			}
@@ -322,7 +344,7 @@ TODO: Statusbar mit Loading-Hinweis (x/y keys loaded)
 		window.setTimeout(function() {
 			window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label="Loading signatures...";
 			data.nodes.forEach(addSigs, {filter: function(key) {return key.keyObj.secretAvailable}});
-			//data.nodes.forEach(addSigs, {filter: function(key) {return !key.keyObj.secretAvailable}});
+			data.nodes.forEach(addSigs, {filter: function(key) {return !key.keyObj.secretAvailable}});
 			window.top.document.getElementById("transparentcrypto-graph-progress").value = 100;
 			window.top.document.getElementById("transparentcrypto-graph-progress-text").label = "100%";
 			window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label="Signatures loaded";
