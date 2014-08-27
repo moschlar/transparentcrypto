@@ -1,5 +1,4 @@
 /*
-TODO: Listen for changes in msgComposeFields
 TODO: Preview window sizing
 TODO: Performance
 */

@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = [ "getKeys", "getSigs" ];
+var EXPORTED_SYMBOLS = [ "getKeys", "getSigs", "keyTrustLevel", "keyTrustName" ];
 
 const Cc = Components.classes, Ci = Components.interfaces, Cu = Components.utils;
 
@@ -8,6 +8,41 @@ try {
 	Cu.import("resource://enigmail/commonFuncs.jsm");
 	Cu.import("resource://enigmail/keyManagement.jsm");
 } catch (ex) {Cu.reportError(ex);}
+
+const keyTrustLevel = {
+	"u": 0,
+	"f": 1,
+	"m": 2,
+	"n": 3,
+	"q": 4,
+	"-": 4,
+	"e": 5,
+	"r": 6,
+	"d": 7,
+	"i": 8,
+	"o": 9,
+	get: function(x) {
+		return this[x] === undefined ? 10 : this[x];
+	}
+};
+
+const keyTrustName = {
+	"u": "The key is ultimately valid",
+	"f": "The key is fully valid",
+	"m": "The key is marginal valid",
+	"n": "The key is valid",
+	"q": "Undefined validity",
+	"-": "Unknown validity",
+	"e": "The key has expired",
+	"r": "The key has been revoked",
+	"d": "The key has been disabled",
+	"i": "The key is invalid",
+	"o": "Unknown",
+	get: function(x) {
+		return this[x] === undefined ? "Totally unknown validity" : this[x];
+	}
+};
+
 
 // see GnuPG doc/DETAILS
 // Format of colon listings

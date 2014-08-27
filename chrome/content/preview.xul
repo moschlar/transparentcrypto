@@ -5,4 +5,7 @@
   <hbox flex="1">
     <description id="email-preview" style="white-space: pre-wrap; font-family: monospace; font-size: smaller;" flex="1"></description>
   </hbox>
+  <statusbar id="status-bar">
+    <statusbarpanel id="transparentcrypto-preview-statusbarpanel" label="transparentcrypto preview"/>
+  </statusbar>
 </window>
