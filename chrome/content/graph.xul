@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<window id="transparentcrypto-window-graph-sigma" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" width="800" height="500">
+<window id="transparentcrypto-window-graph-sigma" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" width="800" height="500" title="PGP Keychain Graph">
 
   <browser id="transparentcrypto-browser-graph" src="chrome://transparentcrypto/content/graph.html" flex="1"></browser>
 

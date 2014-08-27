@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" width="400" height="300" title="Email Preview">
   <hbox flex="1">
     <description id="email-preview" style="white-space: pre-wrap; font-family: monospace; font-size: smaller;" flex="1"></description>
   </hbox>
