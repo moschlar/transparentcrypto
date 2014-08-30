@@ -132,7 +132,7 @@ function getKeys(window) {
 }
 
 function getSigs(window, keyId) {
-	log('keys.jsm: ' + 'getSigs');
+	log('keys.jsm: ' + 'getSigs' + ' ' + keyId);
 
 	var sigs = [];
 

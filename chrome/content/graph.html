@@ -10,20 +10,17 @@ TODO: Statusbar mit Loading-Hinweis (x/y keys loaded)
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 
-<script src="resource://transparentcrypto/util.jsm" charset="utf-8"></script>
+<!--<script src="resource://transparentcrypto/util.jsm" charset="utf-8"></script>-->
 
+<script type="text/javascript" src="chrome://transparentcrypto/content/lib/async.js"></script>
 <script src="chrome://transparentcrypto/content/lib/vis.min.js" charset="utf-8"></script>
 <script src="./lib/vis.min.js" charset="utf-8"></script>
 <link href="chrome://transparentcrypto/content/lib/vis.min.css" rel="stylesheet" type="text/css" />
 <link href="./lib/vis.min.css" rel="stylesheet" type="text/css" />
 
-</head>
-
-<body>
-
-<div id="container" style="width: 100%; height: 100%;"></div>
-
 <script type="text/javascript">
+
+try{
 
 	try {
 		Components.utils.import("resource://transparentcrypto/util.jsm");
@@ -31,12 +28,14 @@ TODO: Statusbar mit Loading-Hinweis (x/y keys loaded)
 		Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 	} catch (ex) {log(ex);}
 
-	var container = document.getElementById('container');
+	var network;
 
 	var data = {
 	  nodes: new vis.DataSet(),
 	  edges: new vis.DataSet(),
 	};
+
+	var nodemap = {}, edgemap = {}, dummyedgemap = {};
 
 	var options = {
 		nodes: {
@@ -160,204 +159,277 @@ TODO: Statusbar mit Loading-Hinweis (x/y keys loaded)
 
 	};
 
-	try {
-	  var network = new vis.Network(container, data, options);
-	  //network.on("resize", function(params) {log(params.width,params.height)});
-	  window.addEventListener("resize", function(target) {
-		  try {
-			network.redraw();
-			network.zoomExtent();
-		  } catch (ex) {log(ex);}
-		});
-	  network.on('click', function(properties) {if (properties.nodes.length > 0) alert('click: ' + JSON.stringify(properties.nodes));});
-	  network.on('doubleClick', function(properties) {if (properties.nodes.length > 0) alert('doubleClick: ' + JSON.stringify(properties.nodes));});
-	} catch (ex) {log(ex);}
 
-	log("graph.html: " + "loaded");
+	function setProgress(v) {
+		var vv = parseInt(v);
+		window.top.document.getElementById("transparentcrypto-graph-progress").value = vv;
+		window.top.document.getElementById("transparentcrypto-graph-progress-text").label = vv.toFixed(0) + "%";
+	}
 
-    document.addEventListener('contextmenu', function(e) {
-        alert('Contextmenu: Currently selected: ' + JSON.stringify(network.getSelection()));
-        e.preventDefault();
-    }, false);
+	function setStatusbar(s) {
+		window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label = s;
+	}
 
-	//window.onload = function() {
-	window.setTimeout(function() {
-		var nodemap = {}, edgemap = {}, dummyedgemap = {};
+	function init() {
 
-		var data_vis = {
-			nodes: [],
-			edges: [],
-		};
+		var container = document.getElementById('container');
 
-		function addKeys() {
-			try {
-				log('graph.html: ' + 'getKeys')
-				var keyList = getKeys(window.top);
-			} catch (ex) {Components.utils.reportError(ex); log('graph.html: ' + ex);}
+		try {
+		 	network = new vis.Network(container, data, options);
+		} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 
-			for (var i=0; i < keyList.length; ++i) {
-				var keyObj = keyList[i];
+		try {
+			//network.on("resize", function(params) {log(params.width,params.height)});
+			window.addEventListener("resize", function(target) {
 				try {
-					if (!nodemap[keyObj.keyId]) {
-						var userId = EnigmailCommon.convertGpgToUnicode(keyObj.userId);
-						nodemap[keyObj.keyId] = i;  // NodeIdx
-						var node = {
-							id: keyObj.keyId,
-							level: keyTrustLevel.get(keyObj.keyTrust),
-							group: keyObj.keyTrust,
-							label: userId.replace(" <", "\n<"),
-							title: "<b>userId:</b> " + escapeHTML(userId) + "<br />" +
-								"<b>keyId:</b> " + keyObj.keyId + "<br />" +
-								"<b>keyTrust:</b> " + keyObj.keyTrust + " (" + keyTrustName.get(keyObj.keyTrust) + ")" + "<br />" +
-								"<b>ownerTrust:</b> " + keyObj.ownerTrust + "<br />" +
-								"<b>secretAvailable:</b> " + keyObj.secretAvailable + "<br />" +
-								"<b>created:</b> " + keyObj.created + "<br />" +
-								"<b>expiry:</b> " + keyObj.expiry + "<br />" +
-								"",
-							keyObj: keyObj,
-						};
-						//data_vis.nodes.push(node);
-						data.nodes.add(node);
-					} else {log('Duplicate node keyId: ' + keyObj.keyId);}
+					network.redraw();
+					network.zoomExtent();
 				} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
-			}
+			});
 
+			//network.on('stabilized', function(properties) {log('Stabilized after ' + properties.iterations + ' iterations');});
+
+			network.on('click', function(properties) {if (properties.nodes.length > 0) alert('click: ' + JSON.stringify(properties.nodes));});
+
+			network.on('doubleClick', function(properties) {if (properties.nodes.length > 0) alert('doubleClick: ' + JSON.stringify(properties.nodes));});
+
+			document.addEventListener('contextmenu', function(e) {
+			    alert('Contextmenu: Currently selected: ' + JSON.stringify(network.getSelection()));
+			    e.preventDefault();
+			}, false);
+
+		} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
+
+		setTimeout(function() {async.series([
+			function(cb) {setTimeout(addKeys, 0, cb);},
+			function(cb) {setTimeout(displaySigs, 0, cb);},
+		]);}, 0);
+	}
+
+	function addKeys(cb) {
+		log('graph.html: ' + 'addKeys');
+
+		setProgress(0);
+		setStatusbar("Loading keys...");
+
+		try {
+			var keyList = getKeys(window.top);
+		} catch (ex) {
+			Components.utils.reportError(ex);
+			log('graph.html: ' + ex);
+			if (cb)
+				cb(ex);
+			return;
+		}
+
+		var secretKeyList = new Array();
+
+		for (var i=0; i < keyList.length; ++i) {
+			var keyObj = keyList[i];
 			try {
-				// Create invisible dummy-edges for each node
-				var centralNodes = data.nodes.get({filter: function(key) {return key.keyObj.secretAvailable}});
-				log(JSON.stringify(centralNodes));
-				data.nodes.forEach(function (node) {
-					var to = node.id;
-					var from = centralNodes[0].id;
-					var edgeId = to + '-' + from;
+				if (!nodemap[keyObj.keyId]) {
+					var userId = EnigmailCommon.convertGpgToUnicode(keyObj.userId);
+					nodemap[keyObj.keyId] = i;  // NodeIdx
+					if (keyObj.secretAvailable)
+						secretKeyList.push(keyObj.keyId);
+					var node = {
+						id: keyObj.keyId,
+						level: keyTrustLevel.get(keyObj.keyTrust),
+						group: keyObj.keyTrust,
+						label: userId.replace(" <", "\n<"),
+						title: 
+							"<b>userId:</b> " + escapeHTML(userId) + "<br />" +
+							"<b>keyId:</b> " + keyObj.keyId + "<br />" +
+							"<b>keyTrust:</b> " + keyObj.keyTrust + " (" + keyTrustName.get(keyObj.keyTrust) + ")" + "<br />" +
+							"<b>ownerTrust:</b> " + keyObj.ownerTrust + "<br />" +
+							"<b>secretAvailable:</b> " + keyObj.secretAvailable + "<br />" +
+							"<b>created:</b> " + keyObj.created + "<br />" +
+							"<b>expiry:</b> " + keyObj.expiry + "<br />" +
+							"",
+						keyObj: keyObj,
+					};
+					data.nodes.add(node);
+				} else {log('Duplicate node keyId: ' + keyObj.keyId);}
+				var v = 33 * (i/keyList.length);
+				setProgress(Math.round(v));
+			} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
+		}
+
+		log('graph.html: ' + 'Created ' + keyList.length + ' nodes');
+
+		setProgress(33);
+
+		// Create invisible dummy edges for each node to keep them together
+
+		var from = secretKeyList[0];
+
+		for (var i=0; i < keyList.length; ++i) {
+			var keyObj = keyList[i];
+			try {
+				var to = keyObj.keyId;
+				var edgeId = from + '=' + to;
+				if (!dummyedgemap[edgeId]) {
 					var edge = {
 						id: edgeId,
 						to: to,
 						from: from,
 						color: "#FFFFFF",
+						dummy: true,
 					};
 					dummyedgemap[edgeId] = true;
 					data.edges.add(edge);
-				}, {filter: function(key) {return !key.keyObj.secretAvailable}});
+				} else {log('Duplicate dumm edgeId: ' + edgeId);}
+				var v = 66 + 33 * (i/keyList.length);
+				setProgress(Math.round(v));
 			} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
-
-			return keyList;
 		}
 
-		window.top.document.getElementById("transparentcrypto-graph-progress").value = 0;
-		window.top.document.getElementById("transparentcrypto-graph-progress-text").label = "0%";
-		window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label = "Loading keys...";
+		log('graph.html: ' + 'Created ' + Object.keys(dummyedgemap).length + ' dummy edges');
 
-		var keyList = addKeys();
+		setProgress(66);
 
-		function shuffleNodes() {
-			// Optimize vertical space consumption
-			var groups = data.nodes.distinct("group");
+		shuffleNodes();
 
-			for (var i=0; i<groups.length; ++i) {
-				var group = groups[i];
-				var level = keyTrustLevel.get(group);
-				var nodes = data.nodes.getIds({filter: function(key) {return (key.group === group)}});
-				var nodeLen = nodes.length;
-				for (var j=0; j<nodeLen; ++j) {
-					if ((nodeLen > 5) && (Math.random() > 0.5)) {
-						data.nodes.update({id: nodes[j], level: 2*level+1});
-					} else {
-						data.nodes.update({id: nodes[j], level: 2*level});
-					}
+		setProgress(100);
+		setStatusbar("Keys loaded!");
+
+		if (cb)
+			cb(null, keyList);
+
+		return keyList;
+	}
+
+	function shuffleNodes(cb) {
+		// Optimize vertical space consumption
+		var groups = data.nodes.distinct("group");
+
+		for (var i=0; i<groups.length; ++i) {
+			var group = groups[i];
+			var level = keyTrustLevel.get(group);
+			var nodes = data.nodes.getIds({filter: function(key) {return (key.group === group)}});
+			var nodeLen = nodes.length;
+			for (var j=0; j<nodeLen; ++j) {
+				if ((nodeLen > 5) && (Math.random() > 0.5)) {
+					data.nodes.update({id: nodes[j], level: 2*level+1});
+				} else {
+					data.nodes.update({id: nodes[j], level: 2*level});
 				}
 			}
 		}
 
-		shuffleNodes();
+		if (cb)
+			cb(null);
+	}
 
-		window.top.document.getElementById("transparentcrypto-graph-progress").value = 10;
-		window.top.document.getElementById("transparentcrypto-graph-progress-text").label = "10%";
-		window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label = "Keys loaded";
+	function addSigs(key, cb) {
+		log("addSigs: " + JSON.stringify(key));
+		var keyId = key.id;
 
-		var keyIdx = 0, keyListLen = keyList.length;
+		var t = nodemap[keyId];
 
-		function addSigs(key) {
-			var keyId = key.id;
+		try {
+			log('graph.html: ' + 'getSigs' + ' ' + keyId);
+			var sigList = getSigs(window.top, keyId);
+		} catch (ex) {Components.utils.reportError(ex); log('graph.html: ' + ex);}
 
-			var t = nodemap[keyId];
-
+		for (var i=0; i < sigList.length; ++i) {
+			var entry = sigList[i];
 			try {
-				log('graph.html: ' + 'getSigs' + ' ' + keyId)
-				var sigList = getSigs(window.top, keyId);
-			} catch (ex) {Components.utils.reportError(ex); log('graph.html: ' + ex);}
-
-			for (var i=0; i < sigList.length; ++i) {
-				var entry = sigList[i];
-				try {
-					//log(JSON.stringify(entry));
-					if (entry.type === "sig") {
-						var edgeId = keyId + '-' + entry.keyId;
-						if (!edgemap[edgeId]) {
-							edgemap[edgeId] = true;
-							var nodeIdx = nodemap[entry.keyId];
-							if (!nodeIdx) {
+				//log(JSON.stringify(entry));
+				if (entry.type === "sig") {
+					var edgeId = keyId + '-' + entry.keyId;
+					if (!edgemap[edgeId]) {
+						edgemap[edgeId] = true;
+						var nodeIdx = nodemap[entry.keyId];
+						if (!nodeIdx) {
+							if (key.keyObj.secretAvailable) {
 								log("Missing node for " + entry.keyId);
-								if (key.keyObj.secretAvailable) {
-									nodeIdx = Object.keys(nodemap).length;
-									nodemap[entry.keyId] = nodeIdx;
-									var userId = EnigmailCommon.convertGpgToUnicode(entry.userId);
-									var node = {
-										id: entry.keyId,
-										level: 10,
-										group: "o",
-										label: userId.replace(" <", "\n<"),
-										title: "<b>userId:</b> " + escapeHTML(userId) + "<br />" +
-											"<b>keyId:</b> " + entry.keyId + "<br />" +
-											"",
-									};
-									//data_vis.nodes.push(node);
-									data.nodes.add(node);
-								}
-							}
-
-							if (nodeIdx) {
-								var edge = {
-									id: edgeId,
-									to: keyId,
-									from: entry.keyId,
+								// Only create node for missing keys when secretAvailable
+								nodeIdx = Object.keys(nodemap).length;
+								nodemap[entry.keyId] = nodeIdx;
+								var userId = EnigmailCommon.convertGpgToUnicode(entry.userId);
+								var node = {
+									id: entry.keyId,
+									level: 10,
+									group: "o",
+									label: userId.replace(" <", "\n<"),
+									title: "<b>userId:</b> " + escapeHTML(userId) + "<br />" +
+										"<b>keyId:</b> " + entry.keyId + "<br />" +
+										"",
 								};
-								//data_vis.edges.push(edge);
-								data.edges.add(edge);
+								data.nodes.add(node);
 							}
-						} else {
-							//log("Duplicate edgeId: " + edgeId);
 						}
-					}
-				} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
-			}
 
-			var v = 10 + 90 * (keyIdx/keyListLen);
-			log('### ' + v);
-			window.top.document.getElementById("transparentcrypto-graph-progress").value = Math.round(v);
-			window.top.document.getElementById("transparentcrypto-graph-progress-text").label = Math.round(v) + "%";
-			keyIdx++;
+						if (nodeIdx) {
+							var edge = {
+								id: edgeId,
+								to: keyId,
+								from: entry.keyId,
+							};
+							data.edges.add(edge);
+						}
+					} else {
+						//log("Duplicate edgeId: " + edgeId);
+					}
+				}
+			} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 		}
 
-		//data.nodes.forEach(addSigs);
+		if (cb)
+			cb(null);
 
-		window.setTimeout(function() {
-			window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label="Loading signatures...";
-			data.nodes.forEach(addSigs, {filter: function(key) {return key.keyObj.secretAvailable}});
-			data.nodes.forEach(addSigs, {filter: function(key) {return !key.keyObj.secretAvailable}});
-			window.top.document.getElementById("transparentcrypto-graph-progress").value = 100;
-			window.top.document.getElementById("transparentcrypto-graph-progress-text").label = "100%";
-			window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label="Signatures loaded";
-		}, 2000);
-	}, 1000);
+	}
 
-	//log(JSON.stringify(nodemap));
-	//log(JSON.stringify(edgemap));
+	function delSigs(key, cb) {
 
-	//data.nodes.add(data_vis.nodes);
-	//data.edges.add(data_vis.edges);
+		if (cb)
+			cb(null);
 
+	}
+
+	function displaySigs(cb) {
+		// Add or delete signatures based on radio button
+		var showallsigs = document.getElementById('showsigs-all').checked || false;
+		var keyList;
+
+		if (showallsigs) 
+			keyList = data.nodes.get();
+		else
+			keyList = data.nodes.get({filter: function(key) {return key.keyObj.secretAvailable}});
+
+		setProgress(0);
+		setStatusbar("Loading signatures...");
+
+		for (var i=0; i < keyList.length; ++i) {
+			addSigs(keyList[i]);
+			var v = 100 * (i/keyList.length);
+			setProgress(Math.round(v));
+		}
+
+		setProgress(100);
+		setStatusbar("Signatures loaded");
+		
+		if (cb)
+			cb(null);
+	}
+
+	log("graph.html: " + "loaded");
+} catch(ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 </script>
+
+</head>
+
+<body onload="init();">
+
+<div id="toolbar" style="font-size: 10pt">
+	<fieldset><legend>Show Signatures</legend>
+		<label><input type="radio" id="showsigs-private" name="showsigs" checked="checked" onclick="displaySigs();" />for Private Keys</label>
+		<label><input type="radio" id="showsigs-all" name="showsigs" onclick="displaySigs();" />for all Keys</label>
+	</fieldset>
+</div>
+
+<div id="container" style="width: 100%; height: 100%; background: #FFFFFF;"></div>
 
 </body>
 
