@@ -107,18 +107,10 @@ try{
 			//alert("Create new key pair or import key from keyserver?");
 			try {
 				window.top.enigmailSearchKeys();
-				//setTimeout(function() {async.series([
-				//	function(cb) {setTimeout(clearGraph, 0, cb);},
-				//	function(cb) {setTimeout(showGraph, 0, cb);},
-				//]);}, 0);
 				setTimeout(function() {async.series([
 					clearGraph,
 					showGraph,
 				]);}, 0);
-				//async.series([
-				//	clearGraph,
-				//	showGraph,
-				//]);
 				data.level = 0;
 				callback(data);
 			} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
