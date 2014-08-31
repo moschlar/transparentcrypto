@@ -104,6 +104,7 @@ try{
 		dataManipulation: true, // http://visjs.org/docs/network.html#Data_manipulation_custom
 
 		onAdd: function(data, callback) {
+			log('onAdd ' + JSON.stringify(data));
 			//alert("Create new key pair or import key from keyserver?");
 			try {
 				window.top.enigmailSearchKeys();
@@ -116,6 +117,7 @@ try{
 			} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 		},
 		onEdit: function(data, callback) {
+			log('onEdit ' + JSON.stringify(data));
 			alert("Update key from keyserver, change owner trust, create signature (see onConnect)?");
 		},
 		/*
@@ -360,12 +362,12 @@ try{
 					var edgeId = keyId + '-' + entry.keyId;
 					var edge = data.edges.get(edgeId);
 					if (!edge) {
+						var userId = EnigmailCommon.convertGpgToUnicode(entry.userId);
 						var node = data.nodes.get(entry.keyId);
 						if (!node) {
 							if (key.keyObj.secretAvailable) {
 								log("Missing node for keyId " + entry.keyId);
 								// Only create node for missing keys when secretAvailable
-								var userId = EnigmailCommon.convertGpgToUnicode(entry.userId);
 								node = {
 									id: entry.keyId,
 									level: 10,
@@ -374,6 +376,7 @@ try{
 									title: 
 										"<b>userId:</b> " + escapeHTML(userId) + "<br />" +
 										"<b>keyId:</b> " + entry.keyId + "<br />" +
+										"<i>Key not in keyring</i>" +
 										"",
 								};
 								data.nodes.add(node);
@@ -381,10 +384,25 @@ try{
 						}
 
 						if (node) {
+							var toUserId = EnigmailCommon.convertGpgToUnicode(key.keyObj.userId);
 							var edge = {
 								id: edgeId,
 								to: keyId,
 								from: entry.keyId,
+								//label: edgeId,
+								title:
+									"<b>For Key:</b> " + key.keyObj.keyId + " (" + escapeHTML(toUserId) + ")<br />" +
+									"<b>From Key</b> " + entry.keyId + " (" + escapeHTML(userId) + ")<br />" +
+									/*
+									"<b>keyValidity:</b> " + entry.keyValidity + "<br />" +
+									"<b>ownerTrust:</b> " + entry.ownerTrust + "<br />" +
+
+									"<b>sigType:</b> " + entry.sigType + "<br />" +
+									"<b>keyUseFor:</b> " + entry.keyUseFor + "<br />" +
+									*/
+									"<b>created:</b> " + entry.created + "<br />" +
+									"<b>expiry:</b> " + entry.expiry + "<br />" +
+									"",
 							};
 							data.edges.add(edge);
 						}
