@@ -64,13 +64,13 @@ const sigRowField = {
 function getKeys(window) {
 	log('keys.jsm: ' + 'getKeys');
 
-	var keys = [];
+	var keys = new Array();
 
 	var keyListObj = {};
 
 	try {
 		//EnigmailFuncs.loadKeyList(window, refresh, keyListObj, sortColumn, sortDirection);
-		EnigmailFuncs.loadKeyList(window, false, keyListObj, "userid", 1);
+		EnigmailFuncs.loadKeyList(window, true, keyListObj, "userid", 1);
 	} catch (ex) {
 		Cu.reportError(ex);
 		log('keys.jsm: ' + ex);
@@ -82,6 +82,8 @@ function getKeys(window) {
 		var keyObj = keyListObj.keyList[keySortObj.keyId];
 		keys.push(keyObj);
 	}
+
+	keys.keyListObj = keyListObj;
 
 	return keys;
 }

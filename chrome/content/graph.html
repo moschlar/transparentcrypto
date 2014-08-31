@@ -26,7 +26,12 @@ try{
 		Components.utils.import("resource://transparentcrypto/util.jsm");
 		Components.utils.import("resource://transparentcrypto/keys.jsm");
 		Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+		Components.utils.import("resource://enigmail/commonFuncs.jsm");
 	} catch (ex) {log(ex);}
+
+
+	var gKeyList;
+	var gKeySortList;
 
 	var network;
 
@@ -107,6 +112,7 @@ try{
 			log('onAdd ' + JSON.stringify(data));
 			//alert("Create new key pair or import key from keyserver?");
 			try {
+				window.top.enigmailRefreshKeys = function() {}; // We do that ourselves
 				window.top.enigmailSearchKeys();
 				setTimeout(function() {async.series([
 					clearGraph,
@@ -128,12 +134,24 @@ try{
 		onConnect: function(edge, callback) {
 			log("onConnect: " + JSON.stringify(edge));
 			// edge = {from: nodeId1, to: nodeId2};
-			var keyObj = data.nodes.get(edge.from).keyObj;
-			var name = edge.from + "-" + edge.to;
-			if (keyObj.secretAvailable) {
-				confirm("Create signature " + name + "?")
+
+			var from = data.nodes.get(edge.from).keyObj;
+			var to = data.nodes.get(edge.to).keyObj;
+
+			if (from.secretAvailable) {
+				//confirm("Create signature " + name + "?")
+				try {
+					var r = EnigmailFuncs.signKey(window.top, to.userId, to.keyId, null);
+					if (r) {
+						setTimeout(function() {async.series([
+							clearGraph,
+							showGraph,
+						]);}, 0);
+						callback(edge);
+					}
+				} catch (ex) {Components.utils.reportError(ex); log('onConnect: ' + ex); return;}
 			} else {
-				alert("Can not create signature " + name + "!");
+				alert("You can only create signatures from a secret key!");
 			}
 		},      
 		onDelete: function(selection, callback) {
@@ -160,7 +178,6 @@ try{
 				}
 			}
 		},
-
 	};
 
 	function setStatus(v, s) {
@@ -236,6 +253,8 @@ try{
 
 		try {
 			var keyList = getKeys(window.top);
+			gKeyList = keyList.keyListObj.keyList;
+			gKeySortList = keyList.keyListObj.keySortList;
 		} catch (ex) {
 			Components.utils.reportError(ex);
 			log('graph.html: ' + ex);
