@@ -37,8 +37,8 @@ try{
 	var network;
 
 	var data = {
-	  nodes: new vis.DataSet(),
-	  edges: new vis.DataSet(),
+		nodes: new vis.DataSet(),
+		edges: new vis.DataSet(),
 	};
 
 	var options = {
@@ -49,53 +49,53 @@ try{
 			allowedToMoveY: true,
 		},
 		edges: {
-		  style: "arrow",
-		  inheritColor: "from",
-		  widthSelectionMultiplier: 1.5,
-		  color: {
+			style: "arrow",
+			inheritColor: "from",
+			widthSelectionMultiplier: 1.5,
+			color: {
 			color: "#848484",
 			highlight: "#000000",
-		  },
+			},
 		},
 		groups: { // http://colorbrewer2.org/?type=diverging&scheme=RdYlGn&n=7
-		  u: { // ultimately valid
+			u: { // ultimately valid
 			color: "#1a9850",
-		  },
-		  f: { // fully valid
+			},
+			f: { // fully valid
 			color: "#91cf60",
-		  },
-		  m: { // marginal valid
+			},
+			m: { // marginal valid
 			color: "#d9ef8b",
-		  },
-		  n: { // valid
+			},
+			n: { // valid
 			color: "#ffffbf",
-		  },
-		  q: { // undefined
+			},
+			q: { // undefined
 			color: "#fee08b",
-		  },
-		  "-": { // unknown
+			},
+			"-": { // unknown
 			color: "#fee08b",
-		  },
-		  e: { // expired
+			},
+			e: { // expired
 			color: "#fc8d59",
-		  },
-		  r: { // revoked
+			},
+			r: { // revoked
 			color: "#fc8d59",
-		  },
-		  d: { // disabled
+			},
+			d: { // disabled
 			color: "#fc8d59",
-		  },
-		  i: { // invalid
+			},
+			i: { // invalid
 			color: "#d73027",
-		  },
-		  o: { // unknown
+			},
+			o: { // unknown
 			color: "#d73027",
-		  },
+			},
 		},
 		hover: true,
 		hierarchicalLayout: {
-		  enabled: true,
-		  nodeSpacing: 300,
+			enabled: true,
+			nodeSpacing: 300,
 		},
 		stabilize: true,
 		smoothCurves: true,
@@ -191,12 +191,23 @@ try{
 		}
 	}
 
-	function init() {
+	function contextMenu(e, properties) {
+		//alert('Contextmenu: Currently selected: ' + JSON.stringify(network.getSelection()));
+		if (hoverNode) {
+			alert('Contextmenu: Currently hovering over: ' + JSON.stringify(hoverNode));
+		}
+		else if (properties && (properties.nodes.length > 0)) {
+			alert('Contextmenu: Currently selected: ' + JSON.stringify(properties.nodes));
+		}
+		if (e)
+			e.preventDefault();
+	}
 
+	function init() {
 		var container = document.getElementById('container');
 
 		try {
-		 	network = new vis.Network(container, data, options);
+			network = new vis.Network(container, data, options);
 		} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 
 		try {
@@ -213,17 +224,11 @@ try{
 			network.on('hoverNode', function(properties) {hoverNode = properties.node;});
 			network.on('blurNode', function(properties) {hoverNode = null;});
 
-			network.on('click', function(properties) {if (properties.nodes.length > 0) alert('click: ' + JSON.stringify(properties.nodes));});
+			network.on('click', function(properties) {return contextMenu(null, properties);});
+			//network.on('click', function(properties) {if (properties.nodes.length > 0) alert('click: ' + JSON.stringify(properties.nodes));});
+			//network.on('doubleClick', function(properties) {if (properties.nodes.length > 0) alert('doubleClick: ' + JSON.stringify(properties.nodes));});
 
-			network.on('doubleClick', function(properties) {if (properties.nodes.length > 0) alert('doubleClick: ' + JSON.stringify(properties.nodes));});
-
-			document.addEventListener('contextmenu', function(e) {
-			    //alert('Contextmenu: Currently selected: ' + JSON.stringify(network.getSelection()));
-			    if (hoverNode) {
-			    	alert('Contextmenu: Currently hovering over: ' + JSON.stringify(hoverNode));
-			    }
-			    e.preventDefault();
-			}, false);
+			document.addEventListener('contextmenu', contextMenu, false);
 
 		} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 
@@ -239,9 +244,6 @@ try{
 			//function(cb) {setTimeout(shuffleNodes, 0, cb);},
 			function(cb) {setTimeout(displaySigs, 0, cb);},
 		], cb);}, 0);
-
-		//if (cb)
-		//	cb(null);
 	}
 
 	function clearGraph(cb) {
@@ -450,12 +452,6 @@ try{
 
 	}
 
-	function delSigs(key, cb) {
-
-		if (cb)
-			cb(null);
-	}
-
 	function displaySigs(cb) {
 		// Add or delete signatures based on radio button
 		var showallsigs = document.getElementById('showsigs-all').checked || false;
@@ -490,8 +486,8 @@ try{
 
 <div id="toolbar" style="font-size: 10pt">
 	<fieldset><legend>Show Signatures</legend>
-		<label><input type="radio" id="showsigs-private" name="showsigs" checked="checked" onclick="displaySigs();" />for Private Keys</label>
-		<label><input type="radio" id="showsigs-all" name="showsigs" onclick="displaySigs();" />for all Keys</label>
+		<label><input type="radio" id="showsigs-private" name="showsigs" onchange="displaySigs();" />for Private Keys</label>
+		<label><input type="radio" id="showsigs-all" name="showsigs" checked="checked" onchange="displaySigs();" />for all Keys</label>
 	</fieldset>
 </div>
 
