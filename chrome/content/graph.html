@@ -35,8 +35,6 @@ try{
 	  edges: new vis.DataSet(),
 	};
 
-	var nodemap = {}, edgemap = {}, dummyedgemap = {};
-
 	var options = {
 		nodes: {
 			shape: "box",
@@ -104,14 +102,26 @@ try{
 		//configurePhysics: true,
 
 		dataManipulation: true, // http://visjs.org/docs/network.html#Data_manipulation_custom
-/*
+
 		onAdd: function(data, callback) {
-		  data.level = 1;
-		  callback(data);
-		},
-*/
-		onAdd: function(data, callback) {
-			alert("Create new key pair or import key from keyserver?");
+			//alert("Create new key pair or import key from keyserver?");
+			try {
+				window.top.enigmailSearchKeys();
+				//setTimeout(function() {async.series([
+				//	function(cb) {setTimeout(clearGraph, 0, cb);},
+				//	function(cb) {setTimeout(showGraph, 0, cb);},
+				//]);}, 0);
+				setTimeout(function() {async.series([
+					clearGraph,
+					showGraph,
+				]);}, 0);
+				//async.series([
+				//	clearGraph,
+				//	showGraph,
+				//]);
+				data.level = 0;
+				callback(data);
+			} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 		},
 		onEdit: function(data, callback) {
 			alert("Update key from keyserver, change owner trust, create signature (see onConnect)?");
@@ -159,15 +169,13 @@ try{
 
 	};
 
-
-	function setProgress(v) {
+	function setStatus(v, s) {
 		var vv = parseInt(v);
 		window.top.document.getElementById("transparentcrypto-graph-progress").value = vv;
 		window.top.document.getElementById("transparentcrypto-graph-progress-text").label = vv.toFixed(0) + "%";
-	}
-
-	function setStatusbar(s) {
-		window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label = s;
+		if (s) {
+			window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label = s;
+		}
 	}
 
 	function init() {
@@ -200,17 +208,37 @@ try{
 
 		} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 
+		showGraph();
+
+	}
+
+	function showGraph(cb) {
+		log("showGraph");
+
 		setTimeout(function() {async.series([
 			function(cb) {setTimeout(addKeys, 0, cb);},
+			//function(cb) {setTimeout(shuffleNodes, 0, cb);},
 			function(cb) {setTimeout(displaySigs, 0, cb);},
-		]);}, 0);
+		], cb);}, 0);
+
+		//if (cb)
+		//	cb(null);
+	}
+
+	function clearGraph(cb) {
+		log("clearGraph");
+
+		data.edges.clear();
+		data.nodes.clear();
+
+		if (cb)
+			cb(null);
 	}
 
 	function addKeys(cb) {
 		log('graph.html: ' + 'addKeys');
 
-		setProgress(0);
-		setStatusbar("Loading keys...");
+		setStatus(0, "Loading keys...");
 
 		try {
 			var keyList = getKeys(window.top);
@@ -227,12 +255,12 @@ try{
 		for (var i=0; i < keyList.length; ++i) {
 			var keyObj = keyList[i];
 			try {
-				if (!nodemap[keyObj.keyId]) {
+				var node = data.edges.get(keyObj.keyId);
+				if (!node) {
 					var userId = EnigmailCommon.convertGpgToUnicode(keyObj.userId);
-					nodemap[keyObj.keyId] = i;  // NodeIdx
 					if (keyObj.secretAvailable)
 						secretKeyList.push(keyObj.keyId);
-					var node = {
+					node = {
 						id: keyObj.keyId,
 						level: keyTrustLevel.get(keyObj.keyTrust),
 						group: keyObj.keyTrust,
@@ -249,49 +277,51 @@ try{
 						keyObj: keyObj,
 					};
 					data.nodes.add(node);
-				} else {log('Duplicate node keyId: ' + keyObj.keyId);}
+				} else {
+					log('Duplicate node for keyId ' + keyObj.keyId + ': ' + JSON.stringify(node));
+				}
 				var v = 33 * (i/keyList.length);
-				setProgress(Math.round(v));
+				setStatus(Math.round(v));
 			} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 		}
 
 		log('graph.html: ' + 'Created ' + keyList.length + ' nodes');
 
-		setProgress(33);
+		setStatus(33);
 
 		// Create invisible dummy edges for each node to keep them together
-
-		var from = secretKeyList[0];
+		var from = secretKeyList.pop();
 
 		for (var i=0; i < keyList.length; ++i) {
 			var keyObj = keyList[i];
 			try {
 				var to = keyObj.keyId;
 				var edgeId = from + '=' + to;
-				if (!dummyedgemap[edgeId]) {
-					var edge = {
+				var edge = data.edges.get(edgeId);
+				if (!edge) {
+					edge = {
 						id: edgeId,
 						to: to,
 						from: from,
 						color: "#FFFFFF",
 						dummy: true,
 					};
-					dummyedgemap[edgeId] = true;
 					data.edges.add(edge);
-				} else {log('Duplicate dumm edgeId: ' + edgeId);}
+				} else {
+					log('Duplicate dummy edge for edgeId ' + edgeId + ': ' + JSON.stringify(edge));
+				}
 				var v = 66 + 33 * (i/keyList.length);
-				setProgress(Math.round(v));
+				setStatus(Math.round(v));
 			} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 		}
 
-		log('graph.html: ' + 'Created ' + Object.keys(dummyedgemap).length + ' dummy edges');
+		log('graph.html: ' + 'Created ' + keyList.length + ' dummy edges');
 
-		setProgress(66);
+		setStatus(66);
 
 		shuffleNodes();
 
-		setProgress(100);
-		setStatusbar("Keys loaded!");
+		setStatus(100, "Keys loaded!");
 
 		if (cb)
 			cb(null, keyList);
@@ -325,8 +355,6 @@ try{
 		log("addSigs: " + JSON.stringify(key));
 		var keyId = key.id;
 
-		var t = nodemap[keyId];
-
 		try {
 			log('graph.html: ' + 'getSigs' + ' ' + keyId);
 			var sigList = getSigs(window.top, keyId);
@@ -338,22 +366,21 @@ try{
 				//log(JSON.stringify(entry));
 				if (entry.type === "sig") {
 					var edgeId = keyId + '-' + entry.keyId;
-					if (!edgemap[edgeId]) {
-						edgemap[edgeId] = true;
-						var nodeIdx = nodemap[entry.keyId];
-						if (!nodeIdx) {
+					var edge = data.edges.get(edgeId);
+					if (!edge) {
+						var node = data.nodes.get(entry.keyId);
+						if (!node) {
 							if (key.keyObj.secretAvailable) {
-								log("Missing node for " + entry.keyId);
+								log("Missing node for keyId " + entry.keyId);
 								// Only create node for missing keys when secretAvailable
-								nodeIdx = Object.keys(nodemap).length;
-								nodemap[entry.keyId] = nodeIdx;
 								var userId = EnigmailCommon.convertGpgToUnicode(entry.userId);
-								var node = {
+								node = {
 									id: entry.keyId,
 									level: 10,
 									group: "o",
 									label: userId.replace(" <", "\n<"),
-									title: "<b>userId:</b> " + escapeHTML(userId) + "<br />" +
+									title: 
+										"<b>userId:</b> " + escapeHTML(userId) + "<br />" +
 										"<b>keyId:</b> " + entry.keyId + "<br />" +
 										"",
 								};
@@ -361,7 +388,7 @@ try{
 							}
 						}
 
-						if (nodeIdx) {
+						if (node) {
 							var edge = {
 								id: edgeId,
 								to: keyId,
@@ -377,7 +404,7 @@ try{
 		}
 
 		if (cb)
-			cb(null);
+			cb(null, sigList);
 
 	}
 
@@ -385,7 +412,6 @@ try{
 
 		if (cb)
 			cb(null);
-
 	}
 
 	function displaySigs(cb) {
@@ -398,20 +424,18 @@ try{
 		else
 			keyList = data.nodes.get({filter: function(key) {return key.keyObj.secretAvailable}});
 
-		setProgress(0);
-		setStatusbar("Loading signatures...");
+		setStatus(0, "Loading signatures...");
 
 		for (var i=0; i < keyList.length; ++i) {
 			addSigs(keyList[i]);
 			var v = 100 * (i/keyList.length);
-			setProgress(Math.round(v));
+			setStatus(Math.round(v));
 		}
 
-		setProgress(100);
-		setStatusbar("Signatures loaded");
+		setStatus(100, "Signatures loaded");
 		
 		if (cb)
-			cb(null);
+			cb(null, keyList);
 	}
 
 	log("graph.html: " + "loaded");

@@ -3,6 +3,9 @@
 
 <window id="transparentcrypto-window-graph-sigma" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" width="800" height="500" title="PGP Keychain Graph">
 
+<script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
+<script type="application/x-javascript" src="chrome://enigmail/content/enigmailKeyManager.js"/>
+
   <browser id="transparentcrypto-browser-graph" src="chrome://transparentcrypto/content/graph.html" flex="1"></browser>
 
   <statusbar>
