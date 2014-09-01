@@ -3,16 +3,76 @@
 
 <window id="transparentcrypto-window-graph-sigma" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" width="800" height="500" title="PGP Keychain Graph">
 
-<script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
-<script type="application/x-javascript" src="chrome://enigmail/content/enigmailKeyManager.js"/>
+	<script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
+	<script type="application/x-javascript" src="chrome://enigmail/content/enigmailKeyManager.js"/>
 
-  <browser id="transparentcrypto-browser-graph" src="chrome://transparentcrypto/content/graph.html" flex="1"></browser>
+	<script type="application/x-javascript" charset="utf-8">
+		Components.utils.import("resource://transparentcrypto/util.jsm");
 
-  <statusbar>
-    <statusbarpanel id="transparentcrypto-graph-statusbarpanel" label="Initializing..."/>
-    <spacer flex="1"/>
-    <statusbarpanel id="transparentcrypto-graph-progress-text" label="0%"/>
-    <progressmeter id="transparentcrypto-graph-progress" mode="determined" value="0"/>
-  </statusbar>
+		var gKeyList = [];
+		var gKeySortList = [];
+
+		function enigmailGetSelectedKeys() {
+			log('enigmailGetSelectedKeys');
+			try {
+				gKeyList = window.gKeyList || [];
+				gKeySortList = window.gKeySortList || [];
+				if (window.hoverNode) {
+					return [window.hoverNode];
+				} else {
+					return [];
+				}
+			} catch(ex) {Components.utils.reportError(ex);}
+		}
+
+		function enigmailRefreshKeys() {
+			log('enigmailRefreshKeys');
+			var b = document.getElementById('transparentcrypto-browser-graph');
+			b.reload();
+		}
+
+		function signKey() {
+			try {
+				return enigSignKey();
+			} catch(ex) {Components.utils.reportError(ex);}
+		}	
+
+		function editKeyTrust() {
+			try {
+				return enigEditKeyTrust();
+			} catch(ex) {Components.utils.reportError(ex);}
+		}	
+
+		function displayKeySigs() {
+			try {
+				return enigmailListSig();
+			} catch(ex) {Components.utils.reportError(ex);}
+		}	
+
+		function displayKeyDetails() {
+			try {
+				return enigmailKeyDetails();
+			} catch(ex) {Components.utils.reportError(ex);}
+		}	
+	</script>
+
+	<popupset>
+		<menupopup id="ctxmenu-graph">
+			<menuitem label="Sign Key" oncommand="signKey()"/>
+			<menuitem label="Set Owner Trust" oncommand="editKeyTrust()"/>
+			<menuseparator/>
+			<menuitem label="View Signatures" oncommand="displayKeySigs()"/>
+			<menuitem label="Key Properties" oncommand="displayKeyDetails()"/>
+		</menupopup>
+	</popupset>
+
+	<browser id="transparentcrypto-browser-graph" src="chrome://transparentcrypto/content/graph.html" flex="1" context="ctxmenu-graph"></browser>
+
+	<statusbar>
+		<statusbarpanel id="transparentcrypto-graph-statusbarpanel" label="Initializing..."/>
+		<spacer flex="1"/>
+		<statusbarpanel id="transparentcrypto-graph-progress-text" label="0%"/>
+		<progressmeter id="transparentcrypto-graph-progress" mode="determined" value="0"/>
+	</statusbar>
 
 </window>

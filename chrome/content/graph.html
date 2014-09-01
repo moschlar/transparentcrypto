@@ -10,31 +10,24 @@ TODO: Statusbar mit Loading-Hinweis (x/y keys loaded)
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 
-<!--<script src="resource://transparentcrypto/util.jsm" charset="utf-8"></script>-->
-
-<script type="text/javascript" src="chrome://transparentcrypto/content/lib/async.js"></script>
-<script src="chrome://transparentcrypto/content/lib/vis.min.js" charset="utf-8"></script>
-<script src="./lib/vis.min.js" charset="utf-8"></script>
-<link href="chrome://transparentcrypto/content/lib/vis.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" charset="utf-8" src="./lib/async.js"></script>
+<script type="text/javascript" charset="utf-8" src="./lib/vis.min.js"></script>
 <link href="./lib/vis.min.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript">
-
-try{
-
 	try {
 		Components.utils.import("resource://transparentcrypto/util.jsm");
 		Components.utils.import("resource://transparentcrypto/keys.jsm");
 		Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 		Components.utils.import("resource://enigmail/commonFuncs.jsm");
-	} catch (ex) {log(ex);}
+	} catch (ex) {Components.utils.reportError(ex); log(ex);}
 
-	var gKeyList;
-	var gKeySortList;
+	var gKeyList = [];
+	var gKeySortList = [];
 
 	var hoverNode = null;
 
-	var network;
+	var network = undefined;
 
 	var data = {
 		nodes: new vis.DataSet(),
@@ -113,6 +106,7 @@ try{
 		onAdd: function(data, callback) {
 			log('onAdd ' + JSON.stringify(data));
 			//alert("Create new key pair or import key from keyserver?");
+			// TODO: Let User choose between importing key or creating new key pair
 			try {
 				window.top.enigmailRefreshKeys = function() {}; // We do that ourselves
 				window.top.enigmailSearchKeys();
@@ -124,10 +118,12 @@ try{
 				callback(data);
 			} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 		},
+		/*
 		onEdit: function(data, callback) {
 			log('onEdit ' + JSON.stringify(data));
-			alert("Update key from keyserver, change owner trust, create signature (see onConnect)?");
+			alert("Update key from keyserver, change owner trust, create signature (see onConnect), ...?");
 		},
+		*/
 		/*
 		onEditEdge: function(data, callback) {
 			alert("Editing edges does not really make sense!");
@@ -153,10 +149,12 @@ try{
 					}
 				} catch (ex) {Components.utils.reportError(ex); log('onConnect: ' + ex); return;}
 			} else {
+				// TODO: Show message in statusbar (non-destructive)
 				alert("You can only create signatures from a secret key!");
 			}
 		},      
 		onDelete: function(selection, callback) {
+			// TODO
 			log("onDelete: " + JSON.stringify(selection));
 			// selection = {nodes: [selectedNodeIds], edges: [selectedEdgeIds]};
 			if (selection.nodes.length > 0) {
@@ -183,23 +181,14 @@ try{
 	};
 
 	function setStatus(v, s) {
-		var vv = parseInt(v);
-		window.top.document.getElementById("transparentcrypto-graph-progress").value = vv;
-		window.top.document.getElementById("transparentcrypto-graph-progress-text").label = vv.toFixed(0) + "%";
+		if (v) {
+			var vv = parseInt(v);
+			window.top.document.getElementById("transparentcrypto-graph-progress").value = vv;
+			window.top.document.getElementById("transparentcrypto-graph-progress-text").label = vv.toFixed(0) + "%";
+		}
 		if (s) {
 			window.top.document.getElementById("transparentcrypto-graph-statusbarpanel").label = s;
 		}
-	}
-
-	function contextMenu(e, properties) {
-		//alert('Contextmenu: Currently selected: ' + JSON.stringify(network.getSelection()));
-		if (hoverNode) {
-			alert('Contextmenu: Currently hovering over: ' + JSON.stringify(hoverNode));
-		} else if (properties && (properties.nodes.length > 0)) {
-			alert('Contextmenu: Currently selected: ' + JSON.stringify(properties.nodes));
-		}
-		if (e)
-			e.preventDefault();
 	}
 
 	function init() {
@@ -220,15 +209,11 @@ try{
 
 			//network.on('stabilized', function(properties) {log('Stabilized after ' + properties.iterations + ' iterations');});
 
-			network.on('hoverNode', function(properties) {hoverNode = properties.node;});
-			network.on('blurNode', function(properties) {hoverNode = null;});
+			network.on('hoverNode', function(properties) {hoverNode = properties.node; window.top.hoverNode = hoverNode;});
+			network.on('blurNode', function(properties) {hoverNode = null; window.top.hoverNode = null;});
 
-			network.on('click', function(properties) {return contextMenu(null, properties);});
 			//network.on('click', function(properties) {if (properties.nodes.length > 0) alert('click: ' + JSON.stringify(properties.nodes));});
 			//network.on('doubleClick', function(properties) {if (properties.nodes.length > 0) alert('doubleClick: ' + JSON.stringify(properties.nodes));});
-
-			document.addEventListener('contextmenu', contextMenu, false);
-
 		} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 
 		showGraph();
@@ -263,10 +248,13 @@ try{
 		try {
 			var keyList = getKeys(window.top);
 			gKeyList = keyList.keyListObj.keyList;
+			window.top.gKeyList = gKeyList;
 			gKeySortList = keyList.keyListObj.keySortList;
+			window.top.gKeySortList = gKeySortList;
 		} catch (ex) {
 			Components.utils.reportError(ex);
 			log('graph.html: ' + ex);
+			setStatus(0, "An error occured while loading keys...");
 			if (cb)
 				cb(ex);
 			return;
@@ -385,7 +373,14 @@ try{
 		try {
 			log('graph.html: ' + 'getSigs' + ' ' + keyId);
 			var sigList = getSigs(window.top, keyId);
-		} catch (ex) {Components.utils.reportError(ex); log('graph.html: ' + ex);}
+		} catch (ex) {
+			Components.utils.reportError(ex);
+			log('graph.html: ' + ex);
+			setStatus(0, "An error occured while loading signatures...");
+			if (cb)
+				cb(ex);
+			return;
+		}
 
 		for (var i=0; i < sigList.length; ++i) {
 			var entry = sigList[i];
