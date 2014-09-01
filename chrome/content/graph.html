@@ -471,22 +471,23 @@ TODO: Statusbar mit Loading-Hinweis (x/y keys loaded)
 	}
 
 	log("graph.html: " + "loaded");
-} catch(ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
 </script>
 
 </head>
 
 <body onload="init();">
+	<div style="width: 100%; height: 100%; display: table;">
+		<div id="toolbar" style="width: 100%; display: table-row; font-size: 10pt;">
+			<fieldset style="display: inline-block;"><legend>Show Signatures</legend>
+				<label><input type="radio" id="showsigs-private" name="showsigs" onchange="displaySigs();" />for Private Keys</label>
+				<label><input type="radio" id="showsigs-all" name="showsigs" checked="checked" onchange="displaySigs();" />for all Keys</label>
+			</fieldset>
+			<button onclick="location.reload();">Reload</button>
+			<button onclick="alert('Help is underway...');">Help</button>
+		</div>
 
-<div id="toolbar" style="font-size: 10pt">
-	<fieldset><legend>Show Signatures</legend>
-		<label><input type="radio" id="showsigs-private" name="showsigs" onchange="displaySigs();" />for Private Keys</label>
-		<label><input type="radio" id="showsigs-all" name="showsigs" checked="checked" onchange="displaySigs();" />for all Keys</label>
-	</fieldset>
-</div>
-
-<div id="container" style="width: 100%; height: 100%; background: #FFFFFF;"></div>
-
+		<div id="container" style="width: 100%; height: 100%; display: table-row; background: #FFFFFF;"></div>
+	</div>
 </body>
 
 </html>
