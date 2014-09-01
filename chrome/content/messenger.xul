@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <overlay id="transparentcrypto-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
- <script type="application/x-javascript" src="chrome://transparentcrypto/content/messenger.js"/>
- <statusbar id="status-bar">
-  <!-- Buttons only show image when they have no label (chrome://global/content/xul.css, line 138) -->
-  <button id="transparentcrypto-button-graph" label="Graph" oncommand="transparentcrypto.graph();" />
- </statusbar>
+	<script type="application/x-javascript" src="chrome://transparentcrypto/content/messenger.js"/>
+
+	<menu id="menu_Enigmail">
+		<menupopup id="menu_EnigmailPopup">
+			<menuitem id="transparentcrypto-menu-graph" insertafter="enigmail_keymgmt" label="Graph" oncommand="transparentcrypto.graph();" />
+		</menupopup>
+	</menu>
+
+	<statusbar id="status-bar">
+		<!-- Buttons only show image when they have no label (chrome://global/content/xul.css, line 138) -->
+		<button id="transparentcrypto-button-graph" label="Graph" oncommand="transparentcrypto.graph();" />
+	</statusbar>
 </overlay>
