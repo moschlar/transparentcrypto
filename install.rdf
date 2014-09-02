@@ -6,7 +6,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>transparentcrypto@secuso.informatik.tu-darmstadt.de</em:id>
     <em:name>transparentcrypto</em:name>
-    <em:version>0.1</em:version>
+    <em:version>0.9</em:version>
     <em:type>2</em:type> <!-- type = extension -->
     <em:creator>Moritz Schlarb</em:creator>
 
@@ -19,16 +19,14 @@
       </Description>
     </em:targetApplication>
 
-<!--
     <em:requires>
-      < ! - - Enigmail - - >
+      <!-- Enigmail -->
       <Description>
         <em:id>{847b3a00-7ab1-11d4-8f02-006008948af5}</em:id>
         <em:minVersion>1.6</em:minVersion>
         <em:maxVersion>1.6</em:maxVersion>
       </Description>
     </em:requires>
--->
   </Description>
 
 </RDF>

@@ -19,6 +19,8 @@
 		Components.utils.import("resource://enigmail/commonFuncs.jsm");
 	} catch (ex) {Components.utils.reportError(ex); log(ex);}
 
+	var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+
 	var gKeyList = [];
 	var gKeySortList = [];
 
@@ -104,23 +106,30 @@
 			log('onAdd ' + JSON.stringify(data));
 
 			// https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIPromptService#select_example
-			var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-			var choices = ["Search for key on keyserver", "Generate new key pair"];
-			var selected = {};
-			var result = prompts.select(null, "Add Node", "How would you like to add a node to your keyring graph?", choices.length, choices, selected);
+			//var choices = ["Search for key on keyserver", "Generate new key pair"];
+			//var selected = {};
+			//var result = prompts.select(null, "Add Node", "How would you like to add a node to your keyring graph?", choices.length, choices, selected);
 
-			if (result) {
-				switch (selected.value) {
+			// https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIPromptService#confirmEx_example
+			var flags =
+				prompts.BUTTON_POS_0 * prompts.BUTTON_TITLE_IS_STRING +
+				prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_CANCEL +
+				prompts.BUTTON_POS_2 * prompts.BUTTON_TITLE_IS_STRING;
+			var check = {value: false};
+			var button = prompts.confirmEx(null, "Add Key", "How would you like to add a key to your keyring?", flags, "Import from keyserver", "", "Generate new key pair", null, check);
+
+			if (button != 1) {
+				switch (button) {
 					case 0: // Import
 						try {
 							window.top.enigmailSearchKeys();
-						} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
+						} catch (ex) {Components.utils.reportError(ex);log('onAdd: ' + ex);}
 						break;
-					case 1: // Create
+					case 2: // Create
 						try {
 							window.top.EnigKeygen();
 							//EnigmailFuncs.openKeyGen();
-						} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
+						} catch (ex) {Components.utils.reportError(ex);log('onAdd: ' + ex);}
 						break;
 				}
 				try {
@@ -130,7 +139,7 @@
 					]);}, 0);
 					data.level = 0;
 					callback(data);
-				} catch (ex) {Components.utils.reportError(ex);log('graph.html: ' + ex);}
+				} catch (ex) {Components.utils.reportError(ex);log('onAdd: ' + ex);}
 			}
 		},
 		/*
@@ -152,43 +161,47 @@
 			var to = data.nodes.get(edge.to).keyObj;
 
 			if (from.secretAvailable) {
-				//confirm("Create signature " + name + "?")
-				try {
-					var r = EnigmailFuncs.signKey(window.top, to.userId, to.keyId, null);
-					if (r) {
-						setTimeout(function() {async.series([
-							clearGraph,
-							showGraph,
-						]);}, 0);
-						callback(edge);
-					}
-				} catch (ex) {Components.utils.reportError(ex); log('onConnect: ' + ex); return;}
+				//if (confirm("Create signature for " + to.keyId + " (" + EnigmailCommon.convertGpgToUnicode(to.userId) + ")?")) {
+				{
+					try {
+						var r = EnigmailFuncs.signKey(window.top, to.userId, to.keyId, null);
+						if (r) {
+							setTimeout(function() {async.series([
+								clearGraph,
+								showGraph,
+							]);}, 0);
+							callback(edge);
+						}
+					} catch (ex) {Components.utils.reportError(ex); log('onConnect: ' + ex); return;}
+				}
 			} else {
-				// TODO: Show message in statusbar (non-destructive)
-				alert("You can only create signatures from a secret key!");
+				setStatus(null, "You can only create signatures from a secret key!");
+				//alert("You can only create signatures from a secret key!");
 			}
 		},      
 		onDelete: function(selection, callback) {
-			// TODO
 			log("onDelete: " + JSON.stringify(selection));
 			// selection = {nodes: [selectedNodeIds], edges: [selectedEdgeIds]};
+
 			if (selection.nodes.length > 0) {
 				for (var i=0; i<selection.nodes.length; ++i) {
+					hoverNode = selection.nodes[i];
+					window.top.hoverNode = hoverNode;
 					var keyObj = data.nodes.get(selection.nodes[i]).keyObj;
 					if (keyObj.secretAvailable) {
-						confirm("Revoke key " + selection.nodes[i] + "?");
+						//if (confirm("Revoke key " + selection.nodes[i] + "?")) {
+						{
+							try {
+								window.top.enigmailRevokeKey();
+							} catch (ex) {Components.utils.reportError(ex);log('onAdd: ' + ex);}
+						}
 					} else {
-						confirm("Delete key " + selection.nodes[i] + " from keyring?");
-					}
-				}
-			} else if (selection.edges.length > 0) {
-				for (var i=0; i<selection.edges.length; ++i) {
-					var edge = data.edges.get(selection.edges[i]);
-					var keyObj = data.nodes.get(edge.from).keyObj;
-					if (keyObj.secretAvailable) {
-						confirm("Revoke signature " + selection.edges[i] + "?")
-					} else {
-						alert("Can not revoke signature " + selection.edges[i] + "!");
+						//if (confirm("Delete key " + selection.nodes[i] + " from keyring?")) {
+						{
+							try {
+								window.top.enigmailDeleteKey();
+							} catch (ex) {Components.utils.reportError(ex);log('onAdd: ' + ex);}
+						}
 					}
 				}
 			}
