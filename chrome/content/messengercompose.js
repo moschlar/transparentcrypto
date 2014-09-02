@@ -27,6 +27,8 @@ var transparentcrypto = {
     recipients: null,
     publicKeys: null,
 
+    timeoutId: null,
+
     showPreviewWindow: function() {
         log('showPreviewWindow');
         log(this.preview_window);
@@ -232,13 +234,19 @@ Content-Transfer-Encoding: 8bit
     updatePreview: function() {
         //log('updatePreview');
         //log(this);
-        if (this.preview_window) {
+        function doUpdate() {
+            //log('doUpdate');
             try {
                 var headers = this.getHeaders();
                 var body = this.getEditorContent();
                 var preview = this.makePreview(headers, body);
                 this.setPreviewContent(preview);
             } catch (ex) { Components.utils.reportError(ex); log(ex); };
+        }
+
+        if (this.preview_window) {
+            window.clearTimeout(this.timeoutId);
+            this.timeoutId = window.setTimeout(doUpdate.bind(this), 100);
         } else {
             log('No preview window')
         }
