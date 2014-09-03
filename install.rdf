@@ -6,9 +6,11 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>transparentcrypto@secuso.informatik.tu-darmstadt.de</em:id>
     <em:name>transparentcrypto</em:name>
-    <em:version>0.9</em:version>
+    <em:version>0.9.3</em:version>
     <em:type>2</em:type> <!-- type = extension -->
     <em:creator>Moritz Schlarb</em:creator>
+
+    <!--<em:strictCompatibility>true</em:strictCompatibility>-->
 
     <em:targetApplication>
       <!-- Thunderbird -->
@@ -19,6 +21,7 @@
       </Description>
     </em:targetApplication>
 
+    <!-- https://developer.mozilla.org/en-US/Add-ons/Install_Manifests#requires -->
     <em:requires>
       <!-- Enigmail -->
       <Description>

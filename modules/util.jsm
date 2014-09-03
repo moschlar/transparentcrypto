@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = [ "log", "console", "escapeHTML", "arrayEquality" ];
+var EXPORTED_SYMBOLS = [ "log", "console", "escapeHTML", "arrayEquality", "checkEnigmail" ];
 
 const Cc = Components.classes, Ci = Components.interfaces, Cu = Components.utils;
 
@@ -52,4 +52,18 @@ function arrayEquality(a, b) {
     return true;
 };
 
-log('util.jsm: ' + 'loaded')
+function checkEnigmail(win) {
+    if (!win)
+        win = window;
+    try {
+        Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+    } catch(ex) {
+        Components.utils.reportError(ex);
+        log(ex);
+        win.alert("It seems that you don't have Enigmail installed! The transparentcrypto addon can't work without it...");
+        return false;
+    }
+    return true;
+}
+
+log('util.jsm: ' + 'loaded');
