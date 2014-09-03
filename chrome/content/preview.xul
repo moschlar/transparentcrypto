@@ -7,5 +7,7 @@
   </hbox>
   <statusbar id="status-bar">
     <statusbarpanel id="transparentcrypto-preview-statusbarpanel" label="transparentcrypto preview"/>
+    <spacer flex="1"/>
+    <button id="transparentcrypto-preview-help-button" label="Help" oncommand="window.open('chrome://transparentcrypto/content/about.xul', 'transparentcrypto-about', 'chrome');" />
   </statusbar>
 </window>
