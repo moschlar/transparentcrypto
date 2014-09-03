@@ -4,12 +4,8 @@
 
 	<menu id="menu_Enigmail">
 		<menupopup id="menu_EnigmailPopup">
-			<menuitem id="transparentcrypto-menu-graph" insertafter="enigmail_keymgmt" label="Graph" oncommand="transparentcrypto.graph();" />
+			<menuitem id="transparentcrypto-menu-graph" insertafter="enigmail_keymgmt" label="Keyring Graph" oncommand="transparentcrypto.graph();" />
 		</menupopup>
 	</menu>
 
-	<statusbar id="status-bar">
-		<!-- Buttons only show image when they have no label (chrome://global/content/xul.css, line 138) -->
-		<button id="transparentcrypto-button-graph" label="Graph" oncommand="transparentcrypto.graph();" />
-	</statusbar>
 </overlay>
