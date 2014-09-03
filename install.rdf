@@ -6,10 +6,10 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>transparentcrypto@secuso.informatik.tu-darmstadt.de</em:id>
     <em:name>transparentcrypto</em:name>
-    <em:version>0.9.4</em:version>
+    <em:version>0.9.5</em:version>
     <em:type>2</em:type> <!-- type = extension -->
     <em:creator>Moritz Schlarb</em:creator>
-    <em:description>Advanced usability/visibility for PGP cryptography in Emails.</em:description>
+    <em:description>Advanced usability/visibility for PGP cryptography in Emails to support cryptography literacy.</em:description>
     <em:aboutURL>chrome://transparentcrypto/content/about.xul</em:aboutURL>
 
     <!--<em:strictCompatibility>true</em:strictCompatibility>-->
