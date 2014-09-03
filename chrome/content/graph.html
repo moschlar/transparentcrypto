@@ -1,15 +1,15 @@
-<!-- https://github.com/almende/vis/blob/master/examples/network/24_hierarchical_layout_userdefined.html -->
 <!-- http://visjs.org/docs/network.html -->
-
+<!-- https://github.com/almende/vis/blob/master/examples/network/24_hierarchical_layout_userdefined.html -->
 <html>
 <head>
 
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 
-<script type="text/javascript" charset="utf-8" src="./lib/async.js"></script>
+<script type="text/javascript" charset="utf-8" src="./lib/async.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="./lib/vis.min.js"></script>
 <link href="./lib/vis.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" charset="utf-8" src="./lib/colorbrewer.v1.min.js"></script>
 
 <script type="text/javascript">
 	try {
@@ -50,39 +50,28 @@
 			},
 		},
 		groups: { // http://colorbrewer2.org/?type=diverging&scheme=RdYlGn&n=7
-			u: { // ultimately valid
-			color: "#1a9850",
-			},
-			f: { // fully valid
-			color: "#91cf60",
-			},
-			m: { // marginal valid
-			color: "#d9ef8b",
-			},
-			n: { // valid
-			color: "#ffffbf",
-			},
-			q: { // undefined
-			color: "#fee08b",
-			},
-			"-": { // unknown
-			color: "#fee08b",
-			},
-			e: { // expired
-			color: "#fc8d59",
-			},
-			r: { // revoked
-			color: "#fc8d59",
-			},
-			d: { // disabled
-			color: "#fc8d59",
-			},
-			i: { // invalid
-			color: "#d73027",
-			},
-			o: { // unknown
-			color: "#d73027",
-			},
+			// ultimately valid
+			u: {color: colorbrewer.RdYlGn[7][6]},
+			// fully valid
+			f: {color: colorbrewer.RdYlGn[7][5]},
+			// marginal valid
+			m: {color: colorbrewer.RdYlGn[7][4]},
+			// valid
+			n: {color: colorbrewer.RdYlGn[7][3]},
+			// undefined
+			q: {color: colorbrewer.RdYlGn[7][2]},
+			// unknown
+			"-": {color: colorbrewer.RdYlGn[7][2]},
+			// expired
+			e: {color: colorbrewer.RdYlGn[7][1]},
+			// revoked
+			r: {color: colorbrewer.RdYlGn[7][1]},
+			// disabled
+			d: {color: colorbrewer.RdYlGn[7][1]},
+			// invalid
+			i: {color: colorbrewer.RdYlGn[7][0]},
+			// unknown
+			o: {color: colorbrewer.RdYlGn[7][0]},
 		},
 		hover: true,
 		hierarchicalLayout: {
