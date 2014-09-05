@@ -198,8 +198,8 @@
 	};
 
 	function setStatus(v, s) {
-		if (v) {
-			var vv = parseInt(v);
+		var vv = parseInt(v);
+		if (vv != NaN) {
 			window.top.document.getElementById("transparentcrypto-graph-progress").value = vv;
 			window.top.document.getElementById("transparentcrypto-graph-progress-text").label = vv.toFixed(0) + "%";
 		}
