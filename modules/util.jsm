@@ -43,6 +43,9 @@ function escapeHTML(s) {
             .replace(/>/g, '&gt;');
 }
 
+/**
+ * Test whether the elements of two arrays are all equal to each other
+ */
 function arrayEquality(a, b) {
     var i = a.length;
     if (i != b.length) return false;
@@ -52,6 +55,9 @@ function arrayEquality(a, b) {
     return true;
 };
 
+/**
+ * Test whether Enigmail is installed and show a warning if not
+ */
 function checkEnigmail(win) {
     if (!win)
         win = window;

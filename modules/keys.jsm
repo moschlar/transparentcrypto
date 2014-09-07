@@ -61,6 +61,11 @@ const sigRowField = {
 	sigHash: 15, // Used hash algorithm for sig records: 2 = SHA-1, 8 = SHA-256
 };
 
+/**
+ * Load all keys in the current keyring
+ * @returns
+ *     An array of all the keyObjs sorted by userid and the original keyListObj as a property
+ */
 function getKeys(window) {
 	log('keys.jsm: ' + 'getKeys');
 
@@ -88,6 +93,11 @@ function getKeys(window) {
 	return keys;
 }
 
+/**
+ * Load all signatures for a given key
+ * @returns
+ *     An array of all the signature entries
+ */
 function getSigs(window, keyId) {
 	log('keys.jsm: ' + 'getSigs' + ' ' + keyId);
 

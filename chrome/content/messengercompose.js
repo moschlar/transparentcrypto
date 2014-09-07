@@ -52,6 +52,7 @@ var transparentcrypto = {
 		}
 	},
 
+	// Get public keys, will only invoke Enigmail if recipients changed
 	getPublicKeys: function(recipients) {
 		if (this.recipients && recipients && arrayEquality(this.recipients, recipients) && this.publicKeys) {
 			// Should be okay to be lazy

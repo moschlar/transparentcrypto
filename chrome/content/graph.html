@@ -33,6 +33,7 @@
 		edges: new vis.DataSet(),
 	};
 
+	// Graph options
 	var options = {
 		nodes: {
 			shape: "box",
@@ -197,6 +198,7 @@
 		},
 	};
 
+	// Update statusbar and progress
 	function setStatus(v, s) {
 		var vv = parseInt(v);
 		if (vv != NaN) {
@@ -208,6 +210,7 @@
 		}
 	}
 
+	// Initialize graph and add various event listeners
 	function init() {
 		var container = document.getElementById('container');
 
@@ -237,6 +240,7 @@
 
 	}
 
+	// (Re-)Show the whole graph
 	function showGraph(cb) {
 		log("showGraph");
 
@@ -247,6 +251,7 @@
 		], cb);}, 0);
 	}
 
+	// Completely clear the graph
 	function clearGraph(cb) {
 		log("clearGraph");
 
@@ -257,6 +262,7 @@
 			cb(null);
 	}
 
+	// Load keys as nodes into the graph
 	function addKeys(cb) {
 		log('graph.html: ' + 'addKeys');
 
@@ -317,6 +323,7 @@
 		setStatus(33);
 
 		// Create invisible dummy edges for each node to keep them together
+
 		var from = secretKeyList.pop();
 
 		for (var i=0; i < keyList.length; ++i) {
@@ -361,8 +368,8 @@
 		return keyList;
 	}
 
+	// Optimize vertical space consumption by randomly stretching nodes to two levels
 	function shuffleNodes(cb) {
-		// Optimize vertical space consumption
 		var groups = data.nodes.distinct("group");
 
 		for (var i=0; i<groups.length; ++i) {
@@ -383,6 +390,7 @@
 			cb(null);
 	}
 
+	// Load signatures for one key as edges into the graph
 	function addSigs(key, cb) {
 		log("addSigs: " + JSON.stringify(key));
 		var keyId = key.id;
@@ -463,6 +471,7 @@
 
 	}
 
+	// Load signatures for all/some keys as edges into the graph
 	function displaySigs(cb) {
 		// Add or delete signatures based on radio button
 		var showallsigs = document.getElementById('showsigs-all').checked || false;

@@ -6,57 +6,10 @@
 	<script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
 	<script type="application/x-javascript" src="chrome://enigmail/content/enigmailKeyManager.js"/>
 
-	<script type="application/x-javascript" charset="utf-8">
-		Components.utils.import("resource://transparentcrypto/util.jsm");
-
-		var gKeyList = [];
-		var gKeySortList = [];
-
-		function enigmailGetSelectedKeys() {
-			log('enigmailGetSelectedKeys');
-			try {
-				gKeyList = window.gKeyList || [];
-				gKeySortList = window.gKeySortList || [];
-				if (window.hoverNode) {
-					return [window.hoverNode];
-				} else {
-					return [];
-				}
-			} catch(ex) {Components.utils.reportError(ex);}
-		}
-
-		function enigmailRefreshKeys() {
-			log('enigmailRefreshKeys');
-			var b = document.getElementById('transparentcrypto-browser-graph');
-			b.reload();
-		}
-
-		function signKey() {
-			try {
-				return enigSignKey();
-			} catch(ex) {Components.utils.reportError(ex);}
-		}	
-
-		function editKeyTrust() {
-			try {
-				return enigEditKeyTrust();
-			} catch(ex) {Components.utils.reportError(ex);}
-		}	
-
-		function displayKeySigs() {
-			try {
-				return enigmailListSig();
-			} catch(ex) {Components.utils.reportError(ex);}
-		}	
-
-		function displayKeyDetails() {
-			try {
-				return enigmailKeyDetails();
-			} catch(ex) {Components.utils.reportError(ex);}
-		}	
-	</script>
+	<script type="application/x-javascript" charset="utf-8" src="chrome://transparentcrypto/content/graph.js"/>
 
 	<popupset>
+		<!-- The context menu -->
 		<menupopup id="ctxmenu-graph">
 			<menuitem label="Sign Key" oncommand="signKey()"/>
 			<menuitem label="Set Owner Trust" oncommand="editKeyTrust()"/>
